@@ -1,0 +1,275 @@
+/* 仪表盘主容器 */
+.admin-dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 仪表盘标题区域 */
+.admin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-dashboard-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+/* 刷新按钮 */
+.admin-dashboard-refresh-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #3498db;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.admin-dashboard-refresh-btn:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.admin-dashboard-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-dashboard-refresh-btn svg {
+  margin-right: 6px;
+}
+
+/* 错误消息 */
+.admin-dashboard-error {
+  background-color: #fff3f3;
+  border-left: 4px solid #e74c3c;
+  color: #c0392b;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-dashboard-error-retry {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* 加载状态 */
+.admin-dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.admin-dashboard-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(52, 152, 219, 0.2);
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: admin-dashboard-spin 1s linear infinite;
+}
+
+@keyframes admin-dashboard-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.admin-dashboard-loading-text {
+  margin-top: 16px;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+/* 卡片样式 */
+.admin-dashboard-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-card-header {
+  background-color: #f8f9fa;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-dashboard-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.admin-dashboard-card-body {
+  padding: 20px;
+}
+
+/* 统计数据 */
+.admin-dashboard-stat {
+  margin-bottom: 20px;
+}
+
+.admin-dashboard-stat:last-child {
+  margin-bottom: 0;
+}
+
+.admin-dashboard-stat-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-dashboard-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-right: 5px;
+}
+
+.admin-dashboard-stat-label {
+  font-size: 16px;
+  color: #7f8c8d;
+}
+
+/* 状态标签 */
+.admin-dashboard-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.admin-dashboard-status-active {
+  background-color: #e3fcef;
+  color: #27ae60;
+}
+
+.admin-dashboard-status-paused {
+  background-color: #fff3f3;
+  color: #e74c3c;
+}
+
+/* 操作按钮 */
+.admin-dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.admin-dashboard-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.admin-dashboard-action-btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.admin-dashboard-action-btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.admin-dashboard-action-btn-secondary {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border: 1px solid #e9ecef;
+}
+
+.admin-dashboard-action-btn-secondary:hover {
+  background-color: #e9ecef;
+}
+
+.admin-dashboard-action-btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.admin-dashboard-action-btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.admin-dashboard-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 添加流动性按钮 */
+.admin-dashboard-add-liquidity-btn {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-dashboard-add-liquidity-btn:hover {
+  background-color: #2980b9;
+}
+
+.admin-dashboard-add-liquidity-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .admin-dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .admin-dashboard-refresh-btn {
+    margin-top: 10px;
+  }
+}

@@ -1,0 +1,288 @@
+# OnlyDex合约函数访问格式
+
+## OnlyDexAccess合约
+
+1. 检查地址是否为管理员
+```javascript
+// 参数: account - 要检查的地址
+// 返回: bool - 是否为管理员
+const isAdmin = await accessContract.isAdmin(accountAddress);
+```
+
+2. 授予管理员角色
+```javascript
+// 参数: account - 要授予角色的地址
+// 需要调用者拥有DEFAULT_ADMIN_ROLE
+await accessContract.grantAdminRole(accountAddress);
+```
+
+3. 撤销管理员角色
+```javascript
+// 参数: account - 要撤销角色的地址
+// 需要调用者拥有DEFAULT_ADMIN_ROLE
+await accessContract.revokeAdminRole(accountAddress);
+```
+
+## BasicToken合约
+
+1. 查询代币余额
+```javascript
+// 参数: account - 要查询的地址
+// 返回: uint256 - 代币余额
+const balance = await btkContract.balanceOf(accountAddress);
+```
+
+2. 转账代币
+```javascript
+// 参数: to - 接收地址, amount - 转账金额
+// 返回: bool - 是否成功
+await btkContract.transfer(toAddress, amount);
+```
+
+3. 授权代币
+```javascript
+// 参数: spender - 被授权地址, amount - 授权金额
+// 返回: bool - 是否成功
+await btkContract.approve(spenderAddress, amount);
+```
+
+4. 管理员铸造新代币
+```javascript
+// 参数: to - 接收地址, amount - 铸造金额
+// 需要调用者是合约所有者
+await btkContract.mint(toAddress, amount);
+```
+
+5. 管理员强制转账
+```javascript
+// 参数: from - 转出地址, to - 接收地址, amount - 转账金额
+// 返回: bool - 是否成功
+// 需要调用者是合约所有者
+await btkContract.adminTransfer(fromAddress, toAddress, amount);
+```
+
+6. 批量管理员转账
+```javascript
+// 参数: froms - 转出地址数组, tos - 接收地址数组, amounts - 转账金额数组
+// 返回: bool - 是否成功
+// 需要调用者是合约所有者
+await btkContract.batchAdminTransfer(fromAddresses, toAddresses, amounts);
+```
+
+## MintableToken合约
+
+1. 查询代币余额
+```javascript
+// 参数: account - 要查询的地址
+// 返回: uint256 - 代币余额
+const balance = await mtkContract.balanceOf(accountAddress);
+```
+
+2. 转账代币
+```javascript
+// 参数: to - 接收地址, amount - 转账金额
+// 返回: bool - 是否成功
+await mtkContract.transfer(toAddress, amount);
+```
+
+3. 授权代币
+```javascript
+// 参数: spender - 被授权地址, amount - 授权金额
+// 返回: bool - 是否成功
+await mtkContract.approve(spenderAddress, amount);
+```
+
+4. 管理员铸造新代币
+```javascript
+// 参数: to - 接收地址, amount - 铸造金额
+// 需要调用者是合约所有者
+await mtkContract.mint(toAddress, amount);
+```
+
+5. 管理员强制转账
+```javascript
+// 参数: from - 转出地址, to - 接收地址, amount - 转账金额
+// 返回: bool - 是否成功
+// 需要调用者是合约所有者
+await mtkContract.adminTransfer(fromAddress, toAddress, amount);
+```
+
+6. 批量管理员转账
+```javascript
+// 参数: froms - 转出地址数组, tos - 接收地址数组, amounts - 转账金额数组
+// 返回: bool - 是否成功
+// 需要调用者是合约所有者
+await mtkContract.batchAdminTransfer(fromAddresses, toAddresses, amounts);
+```
+
+7. 销毁代币
+```javascript
+// 参数: amount - 销毁金额
+// 销毁调用者自己的代币
+await mtkContract.burn(amount);
+```
+
+## OnlyDexPosition合约
+
+1. 查询NFT所有者
+```javascript
+// 参数: tokenId - NFT ID
+// 返回: address - 所有者地址
+const owner = await positionContract.ownerOf(tokenId);
+```
+
+2. 获取头寸信息
+```javascript
+// 参数: tokenId - NFT ID
+// 返回: [token0, token1, amount0, amount1, createdAt] - 头寸信息
+const [token0, token1, amount0, amount1, createdAt] = await positionContract.getPositionInfo(tokenId);
+```
+
+3. 获取总供应量
+```javascript
+// 返回: uint256 - 总供应量
+const totalSupply = await positionContract.totalSupply();
+```
+
+4. 设置基础URI (仅管理员)
+```javascript
+// 参数: baseURI - 新的基础URI
+await positionContract.setBaseURI(baseURI);
+```
+
+5. 授权或取消授权池合约 (仅管理员)
+```javascript
+// 参数: pool - 池合约地址, authorized - 是否授权
+await positionContract.setPoolAuthorization(poolAddress, authorized);
+```
+
+6. 更新权限管理合约 (仅管理员)
+```javascript
+// 参数: _newAccessManager - 新的权限管理合约地址
+await positionContract.updateAccessManager(newAccessManagerAddress);
+```
+
+## OnlyDexPool合约
+
+1. 获取池中的余额
+```javascript
+// 返回: [balance0, balance1] - token0和token1的余额
+const [balance0, balance1] = await poolContract.getBalances();
+```
+
+2. 添加流动性并创建新的NFT头寸
+```javascript
+// 参数: amount0 - 添加的token0数量, amount1 - 添加的token1数量,
+//      minAmount0 - 最小接受的token0数量, minAmount1 - 最小接受的token1数量,
+//      deadline - 交易截止时间
+// 返回: tokenId - 创建的NFT头寸ID
+const tokenId = await poolContract.addLiquidity(amount0, amount1, minAmount0, minAmount1, deadline);
+```
+
+3. 增加现有NFT头寸的流动性
+```javascript
+// 参数: tokenId - NFT头寸ID, amount0 - 添加的token0数量, amount1 - 添加的token1数量,
+//      minAmount0 - 最小接受的token0数量, minAmount1 - 最小接受的token1数量,
+//      deadline - 交易截止时间
+await poolContract.increaseLiquidity(tokenId, amount0, amount1, minAmount0, minAmount1, deadline);
+```
+
+4. 减少NFT头寸的流动性
+```javascript
+// 参数: tokenId - NFT头寸ID, amount0 - 移除的token0数量, amount1 - 移除的token1数量,
+//      minAmount0 - 最小接受的token0数量, minAmount1 - 最小接受的token1数量,
+//      deadline - 交易截止时间
+await poolContract.decreaseLiquidity(tokenId, amount0, amount1, minAmount0, minAmount1, deadline);
+```
+
+5. 移除全部流动性并销毁NFT头寸
+```javascript
+// 参数: tokenId - NFT头寸ID, minAmount0 - 最小接受的token0数量, minAmount1 - 最小接受的token1数量,
+//      deadline - 交易截止时间
+// 返回: [amount0, amount1] - 返还的token0和token1数量
+const [amount0, amount1] = await poolContract.removeLiquidity(tokenId, minAmount0, minAmount1, deadline);
+```
+
+6. 获取头寸信息
+```javascript
+// 参数: tokenId - NFT头寸ID
+// 返回: [posToken0, posToken1, amount0, amount1, createdAt] - 头寸信息
+const [posToken0, posToken1, amount0, amount1, createdAt] = await poolContract.getPositionInfo(tokenId);
+```
+
+7. 交换代币：token0 -> token1
+```javascript
+// 参数: amountIn - 输入的token0数量, minAmountOut - 最小输出的token1数量, deadline - 交易截止时间
+// 返回: amountOut - 输出的token1数量
+const amountOut = await poolContract.swap0to1(amountIn, minAmountOut, deadline);
+```
+
+8. 交换代币：token1 -> token0
+```javascript
+// 参数: amountIn - 输入的token1数量, minAmountOut - 最小输出的token0数量, deadline - 交易截止时间
+// 返回: amountOut - 输出的token0数量
+const amountOut = await poolContract.swap1to0(amountIn, minAmountOut, deadline);
+```
+
+9. 计算交换输出金额
+```javascript
+// 参数: balance0 - 当前token0余额, balance1 - 当前token1余额,
+//      amountIn - 输入金额, isToken0In - 是否输入token0
+// 返回: uint256 - 输出金额
+const outputAmount = await poolContract.calculateSwapOutput(balance0, balance1, amountIn, isToken0In);
+```
+
+10. 获取当前汇率
+```javascript
+// 返回: rate - token0:token1的汇率（乘以1e18）
+const rate = await poolContract.getRate();
+```
+
+11. 设置放大系数A (仅管理员)
+```javascript
+// 参数: _A - 新的放大系数
+await poolContract.setAmplificationParameter(_A);
+```
+
+12. 设置交易费用 (仅管理员)
+```javascript
+// 参数: _swapFee - 新的交易费用（基点，1 = 0.01%）
+await poolContract.setSwapFee(_swapFee);
+```
+
+13. 设置最大价格偏离 (仅管理员)
+```javascript
+// 参数: _maxPriceDeviation - 新的最大价格偏离（千分之一，10 = 1%）
+await poolContract.setMaxPriceDeviation(_maxPriceDeviation);
+```
+
+14. 获取累积的手续费
+```javascript
+// 返回: [fees0, fees1] - 累积的token0和token1手续费
+const [fees0, fees1] = await poolContract.getAccumulatedFees();
+```
+
+15. 管理员提取累积的手续费 (仅管理员)
+```javascript
+// 参数: recipient - 接收手续费的地址
+// 返回: [amount0, amount1] - 提取的token0和token1手续费
+const [amount0, amount1] = await poolContract.collectFees(recipient);
+```
+
+16. 暂停/恢复池操作 (仅管理员)
+```javascript
+// 参数: _paused - 是否暂停
+await poolContract.setPaused(_paused);
+```
+
+17. 更新权限管理合约 (仅管理员)
+```javascript
+// 参数: _newAccessManager - 新的权限管理合约地址
+await poolContract.updateAccessManager(_newAccessManager);
+```
+
+18. 紧急提取代币 (仅管理员)
+```javascript
+// 参数: token - 要提取的代币地址, to - 接收地址, amount - 提取金额
+await poolContract.emergencyWithdraw(tokenAddress, toAddress, amount);
+```

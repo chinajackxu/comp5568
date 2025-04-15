@@ -1,0 +1,154 @@
+.dashboard-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  border-radius: 10px 10px 0 0;
+  padding: 15px 20px;
+}
+
+.dashboard-card-header h5 {
+  margin: 0;
+  color: #343a40;
+  font-weight: 600;
+}
+
+.dashboard-card-body {
+  padding: 20px;
+}
+
+.dashboard-stat {
+  margin-bottom: 20px;
+}
+
+.dashboard-stat h6 {
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.dashboard-stat p {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.dashboard-stat-value {
+  font-weight: 600;
+  font-size: 18px;
+  color: #343a40;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.dashboard-action-btn {
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.dashboard-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-action-btn-primary {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+.dashboard-action-btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+.dashboard-action-btn-danger {
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.dashboard-action-btn-danger:hover {
+  background-color: #c0392b;
+  border-color: #c0392b;
+}
+
+.dashboard-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dashboard-status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.dashboard-status-paused {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.dashboard-loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dashboard-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dashboard-refresh-btn {
+  background-color: transparent;
+  border: none;
+  color: #3498db;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.dashboard-refresh-btn:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+.dashboard-refresh-btn svg {
+  margin-right: 5px;
+}

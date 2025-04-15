@@ -1,0 +1,26 @@
+{
+  "network": "sepolia",
+  "timestamp": "2025-04-14T05:53:23.095Z",
+  "deployer": "0x9C526f16085865F876e9f14cA28FeF89D26DEaAA",
+  "addresses": {
+    "OnlyDexAccess": "0xE659ff7fF819f9E1253Ae74e0c339b337151339C",
+    "BasicToken": "0xBCe297523A621b073A6D2B3e7390E2d266DA4442",
+    "MintableToken": "0xc6da2829E70e4E3ba983326817d5d344d19d8348",
+    "Pool": "0x29C4CCA658E1Bb155e38e6285040e3C2AB800E62",
+    "PositionNFT": "0xBd803ae6cD94A23D1dCe957c0883a736751Cfa12"
+  },
+  "tokens": {
+    "BTK": {
+      "address": "0xBCe297523A621b073A6D2B3e7390E2d266DA4442",
+      "name": "BasicToken",
+      "symbol": "BTK",
+      "decimals": 18
+    },
+    "MTK": {
+      "address": "0xc6da2829E70e4E3ba983326817d5d344d19d8348",
+      "name": "MintableToken",
+      "symbol": "MTK",
+      "decimals": 18
+    }
+  }
+}

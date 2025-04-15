@@ -1,0 +1,26 @@
+{
+  "name": "onlydex",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "compile": "hardhat compile",
+    "deploy:local": "hardhat run scripts/deploy.js --network hardhat",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:direct:local": "hardhat run scripts/deploy_direct.js --network hardhat",
+    "deploy:direct:sepolia": "hardhat run scripts/deploy_direct_sepolia.js --network sepolia",
+    "test:all": "node -e \"process.platform === 'win32' ? require('child_process').execSync('powershell -File ./scripts/test-all.ps1', {stdio: 'inherit'}) : require('child_process').execSync('bash ./scripts/test-all.sh', {stdio: 'inherit'})\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.5.0",
+    "hardhat": "^2.23.0",
+    "solhint": "^5.0.5"
+  }
+}

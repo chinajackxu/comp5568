@@ -1,0 +1,131 @@
+# OnlyDex管理员界面功能规划
+
+## 1. 仪表盘 (Dashboard) - 已实现
+
+界面名称: AdminDashboard
+路径: /admin
+
+功能:
+- 显示系统概览信息 - 已实现
+  - 池中的总流动性 (BTK和MTK) - 已实现
+  - 当前交易费率 - 已实现
+  - 当前最大价格偏离 - 已实现
+  - 池状态 (暂停/活跃) - 已实现
+- 显示累积的手续费 - 已实现
+- 显示当前汇率 - 已实现
+- 显示NFT头寸总供应量 - 已实现
+- 快速操作按钮 (链接到其他功能页面) - 已实现
+- 管理员添加流动性 - 已实现
+- 初始化流动性 - 已实现
+
+API调用:
+- poolContract.getBalances() - 已实现
+- poolContract.getAccumulatedFees() - 已实现
+- poolContract.getRate() - 已实现
+- positionContract.totalSupply() - 已实现
+- poolContract.addLiquidity(amount0, amount1, minAmount0, minAmount1, deadline) - 已实现
+
+
+
+## 2. 代币管理 (Token Management) - 已实现
+
+界面名称: TokenManagement
+路径: /admin/tokens
+
+功能:
+- 查询代币余额 (BTK和MTK) - 已实现
+- 铸造新代币 (BTK和MTK) - 已实现
+- 管理员转账 - 已实现
+
+API调用:
+- btkContract.balanceOf(accountAddress) - 已实现
+- mtkContract.balanceOf(accountAddress) - 已实现
+- btkContract.mint(toAddress, amount) - 已实现
+- mtkContract.mint(toAddress, amount) - 已实现
+- btkContract.transfer(toAddress, amount) - 已实现
+- mtkContract.transfer(toAddress, amount) - 已实现
+
+## 3. 池参数设置 (Pool Settings) - 已实现
+
+界面名称: PoolSettings
+路径: /admin/pool-settings
+
+功能:
+- 设置交易费用 - 已实现
+- 设置最大价格偏离 - 已实现
+- 暂停/恢复池操作 - 已实现
+- 更新权限管理合约 (高级功能，需谨慎使用) - 已实现
+
+API调用:
+- poolContract.setSwapFee(_swapFee) - 已实现
+- poolContract.setMaxPriceDeviation(_maxPriceDeviation) - 已实现
+- poolContract.setPaused(_paused) - 已实现
+- poolContract.updateAccessManager(_newAccessManager) - 已实现
+
+## 4. NFT头寸管理 (Position Management) - 已实现
+
+界面名称: PositionManagement
+路径: /admin/positions
+
+功能:
+- 查询NFT所有者 - 已实现
+- 获取头寸信息 - 已实现
+- 设置基础URI - 已实现
+- 授权或取消授权池合约 - 已实现
+- 查询用户拥有的所有tokenId - 已实现
+
+API调用:
+- positionContract.ownerOf(tokenId) - 已实现
+- positionContract.getPositionInfo(tokenId) - 已实现
+- positionContract.setBaseURI(baseURI) - 已实现
+- positionContract.setPoolAuthorization(poolAddress, authorized) - 已实现
+- positionContract.tokensOfOwner(owner) - 已实现
+- positionContract.tokenOfOwnerByIndex(owner, index) - 已实现
+
+## 5. 手续费管理 (Fee Management) - 已实现
+
+界面名称: FeeManagement
+路径: /admin/fees
+
+功能:
+- 查看累积的手续费 - 已实现
+- 提取累积的手续费到指定地址 - 已实现
+- 设置交易费用 - 已实现
+- 修改手续费率 - 已实现
+
+API调用:
+- poolContract.getAccumulatedFees() - 已实现
+- poolContract.collectFees(recipient) - 已实现
+- poolContract.setSwapFee(_swapFee) - 已实现
+
+
+
+## 实现优先级
+
+1. 高优先级 (核心功能) - 已实现:
+   - 仪表盘 (Dashboard) - 已实现
+   - 代币管理 (Token Management) - 已实现
+   - 池参数设置 (Pool Settings) - 已实现
+
+2. 中优先级 - 已实现:
+   - NFT头寸管理 (Position Management) - 已实现
+   - 手续费管理 (Fee Management) - 已实现
+
+## 界面设计注意事项
+
+1. 所有操作都应该有确认步骤，特别是敏感操作
+2. 提供操作反馈 (成功/失败消息)
+3. 显示交易哈希和链接到Etherscan
+4. 实现加载状态指示器
+5. 提供帮助文本和工具提示
+6. 实现响应式设计，适应不同屏幕尺寸
+7. 考虑添加权限级别，区分超级管理员和普通管理员
+
+## 合约实现更新
+
+1. NFT头寸合约升级：
+   - 将OnlyDexPosition合约升级为OnlyDexPositionEnumerable
+   - 新合约继承自ERC721Enumerable，增加了枚举功能
+   - 添加了tokensOfOwner函数，可以查询用户拥有的所有tokenId
+   - 支持tokenOfOwnerByIndex函数，可以按索引查询用户的token
+   - 保持了与原始合约相同的接口和功能，确保兼容性
