@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { initializeContracts, formatSwapFee, formatMaxPriceDeviation } from '../utils/contracts';
 import { ethers } from 'ethers';
-import '../admin-dashboard.css';
-import '../modal.css';
-import '../input-group.css';
+import '../pool-settings.css';
 
 const PoolSettings = () => {
   const navigate = useNavigate();
@@ -255,11 +253,11 @@ const PoolSettings = () => {
   return (
     <div>
       <Header address={address} isAdmin={true} />
-      <div className="admin-dashboard-container">
-        <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">Pool Settings</h1>
+      <div className="pool-settings-container">
+        <div className="pool-settings-header">
+          <h1 className="pool-settings-title">Pool Settings</h1>
           <button
-            className="admin-dashboard-refresh-btn"
+            className="pool-settings-refresh-btn"
             onClick={() => loadPoolSettings(contracts)}
             disabled={loading || dataLoading}
           >
@@ -272,10 +270,10 @@ const PoolSettings = () => {
         </div>
 
         {error && (
-          <div className="admin-dashboard-error">
+          <div className="pool-settings-error">
             {error}
             <button
-              className="admin-dashboard-error-retry"
+              className="pool-settings-refresh-btn"
               onClick={() => loadPoolSettings(contracts)}
             >
               Retry
@@ -284,14 +282,14 @@ const PoolSettings = () => {
         )}
 
         {success && (
-          <div className="admin-dashboard-success">
+          <div className="pool-settings-success">
             {success}
             {txHash && (
               <a
                 href={`https://${networkName === 'homestead' ? '' : networkName + '.'}etherscan.io/tx/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="admin-dashboard-tx-link"
+                className="pool-settings-tx-link"
               >
                 View Transaction
               </a>
@@ -300,143 +298,141 @@ const PoolSettings = () => {
         )}
 
         {dataLoading ? (
-          <div className="admin-dashboard-loading">
-            <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">Loading pool parameters...</p>
+          <div className="pool-settings-loading">
+            <div className="pool-settings-spinner"></div>
+            <p className="pool-settings-loading-text">Loading pool parameters...</p>
           </div>
         ) : (
-          <div className="row">
+          <div className="pool-settings-row">
             {/* Current Parameters */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
-                <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">Current Parameters</h5>
+            <div className="pool-settings-card">
+              <div className="pool-settings-card-header">
+                <h5 className="pool-settings-card-title">Current Parameters</h5>
+              </div>
+              <div className="pool-settings-card-body">
+                <div className="pool-settings-parameter">
+                  <span className="pool-settings-parameter-label">Swap Fee:</span>
+                  <span className="pool-settings-parameter-value">{swapFee}</span>
                 </div>
-                <div className="admin-dashboard-card-body">
-                  <div className="admin-dashboard-stat">
-                    <p>Swap Fee: <span className="admin-dashboard-stat-value">{swapFee}</span></p>
-                    <p>Max Price Deviation: <span className="admin-dashboard-stat-value">{maxPriceDeviation}</span></p>
-                    <p>Pool Status: <span className={`admin-dashboard-status ${isPaused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
-                      {isPaused ? 'Paused' : 'Active'}
-                    </span></p>
-                  </div>
+                <div className="pool-settings-parameter">
+                  <span className="pool-settings-parameter-label">Max Price Deviation:</span>
+                  <span className="pool-settings-parameter-value">{maxPriceDeviation}</span>
+                </div>
+                <div className="pool-settings-parameter">
+                  <span className="pool-settings-parameter-label">Pool Status:</span>
+                  <span className={`pool-settings-status ${isPaused ? 'pool-settings-status-paused' : 'pool-settings-status-active'}`}>
+                    {isPaused ? 'Paused' : 'Active'}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Parameter Settings */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
-                <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">Parameter Settings</h5>
-                </div>
-                <div className="admin-dashboard-card-body">
-                  {/* Set Swap Fee */}
-                  <form onSubmit={handleSetSwapFee} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">Set Swap Fee</h6>
-                    <div className="input-group mb-3">
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="Enter new swap fee rate (0-1%)"
-                        step="0.01"
-                        min="0"
-                        max="1"
-                        value={newSwapFee}
-                        onChange={(e) => setNewSwapFee(e.target.value)}
-                        disabled={loading}
-                      />
-                      <div className="input-group-append">
-                        <span className="input-group-text">%</span>
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading || !newSwapFee}
-                    >
-                      {loading ? 'Processing...' : 'Set Swap Fee'}
-                    </button>
-                  </form>
+            <div className="pool-settings-card">
+              <div className="pool-settings-card-header">
+                <h5 className="pool-settings-card-title">Parameter Settings</h5>
+              </div>
+              <div className="pool-settings-card-body">
+                {/* Set Swap Fee */}
+                <form onSubmit={handleSetSwapFee} className="pool-settings-form">
+                  <h6 className="pool-settings-form-title">Set Swap Fee</h6>
+                  <div className="pool-settings-input-group">
+                    <input
+                      type="number"
+                      className="pool-settings-input"
+                      placeholder="Enter new swap fee rate (0-1%)"
+                      step="0.01"
+                      min="0"
+                      max="1"
+                      value={newSwapFee}
+                      onChange={(e) => setNewSwapFee(e.target.value)}
+                      disabled={loading}
+                    />
+                    <span className="pool-settings-input-addon">%</span>
+                  </div>
+                  <button
+                    type="submit"
+                    className="pool-settings-button"
+                    disabled={loading || !newSwapFee}
+                  >
+                    {loading ? 'Processing...' : 'Set Swap Fee'}
+                  </button>
+                </form>
 
-                  {/* Set Maximum Price Deviation */}
-                  <form onSubmit={handleSetMaxPriceDeviation} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">Set Maximum Price Deviation</h6>
-                    <div className="input-group mb-3">
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="Enter new maximum price deviation (0.1-20%)"
-                        step="0.1"
-                        min="0.1"
-                        max="20"
-                        value={newMaxPriceDeviation}
-                        onChange={(e) => setNewMaxPriceDeviation(e.target.value)}
-                        disabled={loading}
-                      />
-                      <div className="input-group-append">
-                        <span className="input-group-text">%</span>
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading || !newMaxPriceDeviation}
-                    >
-                      {loading ? 'Processing...' : 'Set Maximum Price Deviation'}
-                    </button>
-                  </form>
+                {/* Set Maximum Price Deviation */}
+                <form onSubmit={handleSetMaxPriceDeviation} className="pool-settings-form">
+                  <h6 className="pool-settings-form-title">Set Maximum Price Deviation</h6>
+                  <div className="pool-settings-input-group">
+                    <input
+                      type="number"
+                      className="pool-settings-input"
+                      placeholder="Enter new maximum price deviation (0.1-20%)"
+                      step="0.1"
+                      min="0.1"
+                      max="20"
+                      value={newMaxPriceDeviation}
+                      onChange={(e) => setNewMaxPriceDeviation(e.target.value)}
+                      disabled={loading}
+                    />
+                    <span className="pool-settings-input-addon">%</span>
+                  </div>
+                  <button
+                    type="submit"
+                    className="pool-settings-button"
+                    disabled={loading || !newMaxPriceDeviation}
+                  >
+                    {loading ? 'Processing...' : 'Set Maximum Price Deviation'}
+                  </button>
+                </form>
 
-                  {/* Pause/Resume Pool Operations */}
-                  <form onSubmit={handleSetPaused} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">Pool Status Management</h6>
-                    <div className="form-check form-switch mb-3">
+                {/* Pause/Resume Pool Operations */}
+                <form onSubmit={handleSetPaused} className="pool-settings-form">
+                  <h6 className="pool-settings-form-title">Pool Status Management</h6>
+                  <div className="pool-settings-switch-container" style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                    <label className="pool-settings-switch">
                       <input
-                        className="form-check-input"
                         type="checkbox"
-                        id="pausedSwitch"
                         checked={newPausedState}
                         onChange={(e) => setNewPausedState(e.target.checked)}
                         disabled={loading}
                       />
-                      <label className="form-check-label" htmlFor="pausedSwitch">
-                        {newPausedState ? 'Pool is paused' : 'Pool is active'}
-                      </label>
-                    </div>
-                    <button
-                      type="submit"
-                      className={`btn ${newPausedState ? 'btn-danger' : 'btn-success'}`}
-                      disabled={loading || newPausedState === isPaused}
-                    >
-                      {loading ? 'Processing...' : newPausedState ? 'Pause Pool Operations' : 'Resume Pool Operations'}
-                    </button>
-                  </form>
+                      <span className="pool-settings-switch-slider"></span>
+                    </label>
+                    <span className="pool-settings-switch-label">
+                      {newPausedState ? 'Pool is paused' : 'Pool is active'}
+                    </span>
+                  </div>
+                  <button
+                    type="submit"
+                    className={`pool-settings-button ${newPausedState ? 'pool-settings-button-danger' : 'pool-settings-button-success'}`}
+                    disabled={loading || newPausedState === isPaused}
+                  >
+                    {loading ? 'Processing...' : newPausedState ? 'Pause Pool Operations' : 'Resume Pool Operations'}
+                  </button>
+                </form>
 
-                  {/* Update Access Manager Contract */}
-                  <form onSubmit={handleUpdateAccessManager}>
-                    <h6 className="admin-dashboard-form-title">Update Access Manager Contract (Advanced)</h6>
-                    <div className="input-group mb-3">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter new access manager contract address"
-                        value={newAccessManager}
-                        onChange={(e) => setNewAccessManager(e.target.value)}
-                        disabled={loading}
-                      />
-                    </div>
-                    <div className="alert alert-warning" role="alert">
-                      <small>Warning: This operation will change the access manager contract address, which may result in loss of admin privileges. Please make sure you know what you are doing!</small>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-warning"
-                      disabled={loading || !newAccessManager}
-                    >
-                      {loading ? 'Processing...' : 'Update Access Manager Contract'}
-                    </button>
-                  </form>
-                </div>
+                {/* Update Access Manager Contract */}
+                <form onSubmit={handleUpdateAccessManager} className="pool-settings-form">
+                  <h6 className="pool-settings-form-title">Update Access Manager Contract (Advanced)</h6>
+                  <input
+                    type="text"
+                    className="pool-settings-address-input"
+                    placeholder="Enter new access manager contract address"
+                    value={newAccessManager}
+                    onChange={(e) => setNewAccessManager(e.target.value)}
+                    disabled={loading}
+                  />
+                  <div className="pool-settings-warning">
+                    Warning: This operation will change the access manager contract address, which may result in loss of admin privileges. Please make sure you know what you are doing!
+                  </div>
+                  <button
+                    type="submit"
+                    className="pool-settings-button pool-settings-button-warning"
+                    disabled={loading || !newAccessManager}
+                  >
+                    {loading ? 'Processing...' : 'Update Access Manager Contract'}
+                  </button>
+                </form>
               </div>
             </div>
           </div>

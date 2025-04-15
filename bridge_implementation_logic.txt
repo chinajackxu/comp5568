@@ -1,0 +1,100 @@
+# 跨链桥实现逻辑：Sepolia 和 Hardhat 之间的 1:1 代币兑换
+
+本文档详细描述了在 Sepolia 测试网和 Hardhat 本地网络之间实现 MintableToken 1:1 兑换的实现逻辑。
+
+## 1. 系统架构概述
+
+整个跨链桥系统包含以下组件：
+
+1. **智能合约**：
+   - Sepolia 网络上的 BridgeSepolia 合约
+   - Hardhat 网络上的 BridgeHardhat 合约
+   - 两个网络上的 MintableToken 合约实例
+
+2. **后端监控服务**：
+   - 监听两个网络上的 TokensLocked 事件
+   - 处理跨链请求，调用目标网络上的 unlockTokens 函数
+
+3. **前端界面**：
+   - 用户友好的界面，允许用户在两个网络间转移代币
+   - 显示交易状态和历史记录
+
+## 2. 合约部署流程
+
+### 2.1 Hardhat 网络部署
+
+1. 部署 MintableToken 合约到 Hardhat 网络
+2. 部署 BridgeHardhat 合约，将 MintableToken 地址作为参数
+3. 为 BridgeHardhat 合约授予足够的 MintableToken 额度，以便解锁操作
+
+### 2.2 Sepolia 网络部署
+
+1. 使用现有的 MintableToken 合约地址
+2. 部署 BridgeSepolia 合约，将 MintableToken 地址作为参数
+3. 为 BridgeSepolia 合约授予足够的 MintableToken 额度，以便解锁操作
+
+### 2.3 部署脚本
+
+创建两个部署脚本：
+- `deploy_bridge_hardhat.js`：部署 Hardhat 网络上的桥接合约
+- `deploy_bridge_sepolia.js`：部署 Sepolia 网络上的桥接合约
+
+## 3. 后端监控服务设计
+
+### 3.1 架构
+
+后端服务将使用 Node.js 和 ethers.js 库实现，主要功能包括：
+
+1. 同时连接到 Hardhat 和 Sepolia 网络
+2. 监听两个网络上的 TokensLocked 事件
+3. 验证事件并在目标网络上执行 unlockTokens 操作
+4. 记录所有跨链交易到数据库
+5. 提供 API 接口查询交易状态
+
+### 3.2 事件监听流程
+
+```
+┌───────────────┌───────────────┌───────────────
+│  TokensLocked   │     │  后端验证和处理  │     │   TokensUnlocked │
+│  事件被触发     │────▶│  跨链请求       │────▶│   事件被触发     │
+└───────────────┘     └───────────────┘     └───────────────┘
+```
+
+### 3.3 数据库结构
+
+创建一个 `bridge_transactions` 表，包含以下字段：
+
+```
+- id: 唯一标识符
+- source_network: 源网络 (hardhat/sepolia)
+- destination_network: 目标网络 (hardhat/sepolia)
+- source_tx_hash: 源交易哈希
+- destination_tx_hash: 目标交易哈希
+- sender: 发送者地址
+- recipient: 接收者地址
+- amount: 转移金额
+- status: 状态 (pending/completed/failed)
+- created_at: 创建时间
+- updated_at: 更新时间
+```
+
+### 3.4 监控服务代码结构
+
+```
+bridge-monitor/
+├── config/
+│   ├── hardhat.js    # Hardhat 网络配置
+│   └── sepolia.js    # Sepolia 网络配置
+├── db/
+│   └── models.js     # 数据库模型定义
+├── services/
+│   ├── hardhat.js    # Hardhat 网络事件监听
+│   ├── sepolia.js    # Sepolia 网络事件监听
+│   └── bridge.js     # 跨链桥核心逻辑
+├── utils/
+│   ├── logger.js     # 日志工具
+│   └── helpers.js    # 辅助函数
+├── index.js          # 主入口文件
+└── package.json
+```
+

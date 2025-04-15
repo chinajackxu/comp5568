@@ -228,7 +228,7 @@ const UserDashboard = () => {
                     </button>
                     <button
                       className="user-dashboard-action-btn user-dashboard-action-btn-info"
-                      onClick={() => navigate('/user/positions')}
+                      onClick={() => navigate('/user/liquidity')}
                     >
                       View Positions
                     </button>

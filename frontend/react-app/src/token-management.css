@@ -1,0 +1,327 @@
+/* 代币管理页面样式 */
+.token-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f7fa;
+  min-height: calc(100vh - 60px);
+}
+
+/* 标题区域 */
+.token-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.token-management-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 刷新按钮 */
+.token-management-refresh-btn {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.token-management-refresh-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.token-management-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.token-management-refresh-btn svg {
+  margin-right: 8px;
+}
+
+/* 卡片行布局 */
+.token-management-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* 卡片样式 */
+.token-management-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid #e6e6e6;
+}
+
+.token-management-card-small {
+  flex: 1;
+  min-width: 220px;
+}
+
+.token-management-card-medium {
+  flex: 1;
+  min-width: 350px;
+  max-width: calc(50% - 10px);
+}
+
+.token-management-card-header {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.token-management-card-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #3498db;
+}
+
+.token-management-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+}
+
+.token-management-card-body {
+  padding: 20px 25px;
+  background-color: #fff;
+}
+
+/* 代币余额显示 */
+.token-management-balance-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.token-management-balance-item {
+  flex: 1;
+  min-width: 200px;
+  padding: 15px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.token-management-balance-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.token-management-balance-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-right: 5px;
+}
+
+.token-management-balance-symbol {
+  font-size: 16px;
+  color: #64748b;
+}
+
+/* 表单样式 */
+.token-management-form {
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.token-management-form * {
+  box-sizing: border-box;
+}
+
+.token-management-form-group {
+  margin-bottom: 15px;
+}
+
+.token-management-form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.token-management-radio-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.token-management-radio-item {
+  display: flex;
+  align-items: center;
+}
+
+.token-management-radio {
+  margin-right: 5px;
+}
+
+.token-management-input-group {
+  display: flex;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.token-management-input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.token-management-address-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #2c3e50;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.token-management-address-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.token-management-address-input::placeholder {
+  color: #a0aec0;
+}
+
+.token-management-input-addon {
+  background-color: #f1f5f9;
+  padding: 10px 15px;
+  color: #64748b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.token-management-help-text {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 5px;
+}
+
+/* 按钮样式 */
+.token-management-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.token-management-button:hover {
+  background-color: #2980b9;
+}
+
+.token-management-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* 消息提示 */
+.token-management-error {
+  background-color: #fee2e2;
+  color: #ef4444;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.token-management-success {
+  background-color: #d1fae5;
+  color: #10b981;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* 加载状态 */
+.token-management-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.token-management-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(52, 152, 219, 0.2);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.token-management-loading-text {
+  margin-top: 10px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .token-management-row {
+    flex-direction: column;
+  }
+
+  .token-management-card-medium {
+    max-width: 100%;
+  }
+}

@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { initializeContracts, formatTokenAmount } from '../utils/contracts';
 import { ethers } from 'ethers';
-import '../admin-dashboard.css';
-import '../modal.css';
-import '../input-group.css';
+import '../position-management.css';
 
 const PositionManagement = () => {
   const navigate = useNavigate();
@@ -55,8 +53,8 @@ const PositionManagement = () => {
         const network = await provider.getNetwork();
         setNetworkName(network.name);
 
-        // Set default pool address
-        setPoolAddress(contractsResult.poolContract.address);
+        // 不再预设池合约地址
+        setPoolAddress('');
 
         setDataLoading(false);
       } catch (error) {
@@ -276,26 +274,26 @@ const PositionManagement = () => {
   return (
     <div>
       <Header address={address} isAdmin={true} />
-      <div className="admin-dashboard-container">
-        <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">NFT Position Management</h1>
+      <div className="position-management-container">
+        <div className="position-management-header">
+          <h1 className="position-management-title">NFT Position Management</h1>
         </div>
 
         {error && (
-          <div className="admin-dashboard-error">
+          <div className="position-management-error">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="admin-dashboard-success">
+          <div className="position-management-success">
             {success}
             {txHash && (
               <a
                 href={`https://${networkName === 'homestead' ? '' : networkName + '.'}etherscan.io/tx/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="admin-dashboard-tx-link"
+                className="position-management-tx-link"
               >
                 View Transaction
               </a>
@@ -304,41 +302,35 @@ const PositionManagement = () => {
         )}
 
         {dataLoading ? (
-          <div className="admin-dashboard-loading">
-            <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">Loading...</p>
+          <div className="position-management-loading">
+            <div className="position-management-spinner"></div>
+            <p className="position-management-loading-text">Loading...</p>
           </div>
         ) : (
-          <div className="row">
-            {/* Query NFT Owner and Position Information */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
-                <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">Query NFT Information</h5>
+          <div className="position-management-row">
+            {[
+              /* Query NFT Owner and Position Information */
+              <div className="position-management-card" key="query-card">
+                <div className="position-management-card-header">
+                  <h5 className="position-management-card-title">Query NFT Information</h5>
                 </div>
-                <div className="admin-dashboard-card-body">
-                  <form onSubmit={handleQueryOwner} className="mb-4">
-                    <div className="input-group mb-3">
+                <div className="position-management-card-body">
+                  <form onSubmit={handleQueryOwner} className="position-management-form">
+                    <h6 className="position-management-form-title">Query Token Information</h6>
+                    <div className="position-management-input-group">
                       <input
                         type="number"
-                        className="form-control"
+                        className="position-management-input"
                         placeholder="Enter Token ID"
                         value={tokenId}
                         onChange={(e) => setTokenId(e.target.value)}
                         disabled={loading}
                       />
                     </div>
-                    <div className="d-flex">
-                      <button
-                        type="submit"
-                        className="btn btn-primary me-2"
-                        disabled={loading || !tokenId}
-                      >
-                        {loading ? 'Querying...' : 'Query Owner'}
-                      </button>
+                    <div className="position-management-button-container">
                       <button
                         type="button"
-                        className="btn btn-secondary"
+                        className="position-management-button"
                         onClick={handleGetPositionInfo}
                         disabled={loading || !tokenId}
                       >
@@ -348,45 +340,45 @@ const PositionManagement = () => {
                   </form>
 
                   {ownerAddress && (
-                    <div className="admin-dashboard-info-box mb-3">
+                    <div className="position-management-info-box">
                       <h6>Owner Information</h6>
-                      <p className="mb-0">
+                      <p>
                         <strong>Token ID:</strong> {tokenId}
                       </p>
-                      <p className="mb-0">
+                      <p>
                         <strong>Owner Address:</strong> {ownerAddress}
                       </p>
                     </div>
                   )}
 
                   {positionInfo && (
-                    <div className="admin-dashboard-info-box">
+                    <div className="position-management-info-box">
                       <h6>Position Information</h6>
-                      <p className="mb-0">
+                      <p>
                         <strong>Token0 Address:</strong> {positionInfo.token0}
                       </p>
-                      <p className="mb-0">
+                      <p>
                         <strong>Token1 Address:</strong> {positionInfo.token1}
                       </p>
-                      <p className="mb-0">
+                      <p>
                         <strong>Token0 Amount:</strong> {positionInfo.amount0}
                       </p>
-                      <p className="mb-0">
+                      <p>
                         <strong>Token1 Amount:</strong> {positionInfo.amount1}
                       </p>
-                      <p className="mb-0">
+                      <p>
                         <strong>Created At:</strong> {positionInfo.createdAt}
                       </p>
                     </div>
                   )}
 
                   {/* Query all tokenIds owned by a user */}
-                  <form onSubmit={handleGetUserTokens} className="mt-4">
-                    <h6 className="admin-dashboard-form-title">Query User's NFTs</h6>
-                    <div className="input-group mb-3">
+                  <form onSubmit={handleGetUserTokens} className="position-management-form">
+                    <h6 className="position-management-form-title">Query User's NFTs</h6>
+                    <div className="position-management-address-input">
                       <input
                         type="text"
-                        className="form-control"
+                        className="position-management-input"
                         placeholder="Enter User Address"
                         value={userAddress}
                         onChange={(e) => setUserAddress(e.target.value)}
@@ -395,7 +387,7 @@ const PositionManagement = () => {
                     </div>
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="position-management-button"
                       disabled={loading || !userAddress}
                     >
                       {loading ? 'Querying...' : 'Query User NFTs'}
@@ -403,87 +395,84 @@ const PositionManagement = () => {
                   </form>
 
                   {userTokens.length > 0 && (
-                    <div className="admin-dashboard-info-box mt-3">
+                    <div className="position-management-info-box">
                       <h6>User's NFT Positions</h6>
-                      <div className="user-tokens-list">
+                      <div className="position-management-tokens-list">
                         {userTokens.map((tokenId, index) => (
-                          <div key={index} className="user-token-item">
-                            <span className="badge bg-primary me-2">Token ID: {tokenId}</span>
+                          <div key={index} className="position-management-token-item">
+                            Token ID: {tokenId}
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
+              </div>,
 
-            {/* Set Base URI and Pool Authorization */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
-                <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">NFT Settings</h5>
+              /* Set Base URI and Pool Authorization */
+              <div className="position-management-card" key="settings-card">
+                <div className="position-management-card-header">
+                  <h5 className="position-management-card-title">NFT Settings</h5>
                 </div>
-                <div className="admin-dashboard-card-body">
-                  {/* Set Base URI */}
-                  <form onSubmit={handleSetBaseURI} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">Set Base URI</h6>
-                    <div className="input-group mb-3">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Base URI (e.g.: https://example.com/nft/)"
-                        value={baseURI}
-                        onChange={(e) => setBaseURI(e.target.value)}
-                        disabled={loading}
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading || !baseURI}
-                    >
-                      {loading ? 'Processing...' : 'Set Base URI'}
-                    </button>
-                  </form>
+                <div className="position-management-card-body">
+                {/* Set Base URI */}
+                <form onSubmit={handleSetBaseURI} className="position-management-form">
+                  <h6 className="position-management-form-title">Set Base URI</h6>
+                  <div className="position-management-address-input">
+                    <input
+                      type="text"
+                      placeholder="Enter Base URI (e.g.: https://example.com/nft/)"
+                      value={baseURI}
+                      onChange={(e) => setBaseURI(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="position-management-button"
+                    disabled={loading || !baseURI}
+                  >
+                    {loading ? 'Processing...' : 'Set Base URI'}
+                  </button>
+                </form>
 
-                  {/* Authorize or Deauthorize Pool Contract */}
-                  <form onSubmit={handleSetPoolAuthorization}>
-                    <h6 className="admin-dashboard-form-title">Pool Contract Authorization</h6>
-                    <div className="input-group mb-3">
+                {/* Authorize or Deauthorize Pool Contract */}
+                <form onSubmit={handleSetPoolAuthorization} className="position-management-form">
+                  <h6 className="position-management-form-title">Pool Contract Authorization</h6>
+                  <div className="position-management-address-input">
+                    <input
+                      type="text"
+                      placeholder="Enter Pool Contract Address"
+                      value={poolAddress}
+                      onChange={(e) => setPoolAddress(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="position-management-switch-container">
+                    <label className="position-management-switch">
                       <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Pool Contract Address"
-                        value={poolAddress}
-                        onChange={(e) => setPoolAddress(e.target.value)}
-                        disabled={loading}
-                      />
-                    </div>
-                    <div className="form-check form-switch mb-3">
-                      <input
-                        className="form-check-input"
                         type="checkbox"
-                        id="authorizedSwitch"
                         checked={isAuthorized}
                         onChange={(e) => setIsAuthorized(e.target.checked)}
                         disabled={loading}
                       />
-                      <label className="form-check-label" htmlFor="authorizedSwitch">
-                        {isAuthorized ? 'Authorize' : 'Deauthorize'}
-                      </label>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading || !poolAddress}
-                    >
-                      {loading ? 'Processing...' : isAuthorized ? 'Authorize Pool Contract' : 'Deauthorize Pool Contract'}
-                    </button>
-                  </form>
-                </div>
+                      <span className="position-management-switch-slider"></span>
+                    </label>
+                    <span className="position-management-switch-label">
+                      {isAuthorized ? 'Authorize' : 'Deauthorize'}
+                    </span>
+                  </div>
+                  <button
+                    type="submit"
+                    className="position-management-button"
+                    disabled={loading || !poolAddress}
+                  >
+                    {loading ? 'Processing...' : isAuthorized ? 'Authorize Pool Contract' : 'Deauthorize Pool Contract'}
+                  </button>
+                </form>
               </div>
             </div>
+            ]}
           </div>
         )}
       </div>

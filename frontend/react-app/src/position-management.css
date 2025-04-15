@@ -1,0 +1,381 @@
+/* NFT Position Management页面样式 */
+.position-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f7fa;
+  min-height: calc(100vh - 60px);
+}
+
+/* 标题区域 */
+.position-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.position-management-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 卡片行布局 */
+.position-management-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* 卡片样式 */
+.position-management-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid #e6e6e6;
+  flex: 1;
+  min-width: 350px;
+}
+
+.position-management-card-header {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.position-management-card-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #3498db;
+}
+
+.position-management-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+}
+
+.position-management-card-body {
+  padding: 20px 25px;
+  background-color: #fff;
+}
+
+/* 表单样式 */
+.position-management-form {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+}
+
+.position-management-form:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.position-management-form * {
+  box-sizing: border-box;
+}
+
+.position-management-form-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.position-management-input-group {
+  display: flex;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.position-management-input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.position-management-address-input {
+  width: 100%;
+  display: block;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.position-management-address-input input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #2c3e50;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.position-management-address-input input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.position-management-address-input input::placeholder {
+  color: #a0aec0;
+}
+
+/* 按钮样式 */
+.position-management-button {
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  min-width: 120px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.position-management-button:last-child {
+  margin-right: 0;
+}
+
+.position-management-button:hover {
+  background-color: #2980b9;
+}
+
+.position-management-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.position-management-button-secondary {
+  background-color: #64748b;
+}
+
+.position-management-button-secondary:hover {
+  background-color: #475569;
+}
+
+.position-management-button-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* 开关样式 */
+.position-management-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.position-management-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.position-management-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.position-management-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.position-management-switch input:checked + .position-management-switch-slider {
+  background-color: #3498db;
+}
+
+.position-management-switch input:checked + .position-management-switch-slider:before {
+  transform: translateX(26px);
+}
+
+.position-management-switch-label {
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.position-management-switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* 信息显示框 */
+.position-management-info-box {
+  background-color: #f8fafc;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3498db;
+}
+
+.position-management-info-box h6 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.position-management-info-box p {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.position-management-info-box p strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* 用户代币列表 */
+.position-management-tokens-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.position-management-token-item {
+  background-color: #3498db;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 消息提示 */
+.position-management-error {
+  background-color: #fee2e2;
+  color: #ef4444;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.position-management-success {
+  background-color: #d1fae5;
+  color: #10b981;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.position-management-tx-link {
+  color: #3498db;
+  text-decoration: none;
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.position-management-tx-link:hover {
+  text-decoration: underline;
+}
+
+/* 加载状态 */
+.position-management-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.position-management-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(52, 152, 219, 0.2);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.position-management-loading-text {
+  margin-top: 10px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .position-management-row {
+    flex-direction: column;
+  }
+
+  .position-management-card {
+    max-width: 100%;
+  }
+
+  .position-management-button-container {
+    flex-direction: column;
+  }
+
+  .position-management-button {
+    margin-right: 0;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+}

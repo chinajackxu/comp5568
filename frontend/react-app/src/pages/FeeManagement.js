@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { initializeContracts, formatTokenAmount } from '../utils/contracts';
 import { ethers } from 'ethers';
-import '../admin-dashboard.css';
-import '../modal.css';
-import '../input-group.css';
+import '../fee-management.css';
 
 const FeeManagement = () => {
   const navigate = useNavigate();
@@ -193,26 +191,26 @@ const FeeManagement = () => {
   return (
     <div>
       <Header address={address} isAdmin={true} />
-      <div className="admin-dashboard-container">
-        <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">Fee Management</h1>
+      <div className="fee-management-container">
+        <div className="fee-management-header">
+          <h1 className="fee-management-title">Fee Management</h1>
         </div>
 
         {error && (
-          <div className="admin-dashboard-error">
+          <div className="fee-management-error">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="admin-dashboard-success">
+          <div className="fee-management-success">
             {success}
             {txHash && (
               <a
                 href={`https://${networkName === 'homestead' ? '' : networkName + '.'}etherscan.io/tx/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="admin-dashboard-tx-link"
+                className="fee-management-tx-link"
               >
                 View Transaction
               </a>
@@ -221,108 +219,105 @@ const FeeManagement = () => {
         )}
 
         {dataLoading ? (
-          <div className="admin-dashboard-loading">
-            <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">Loading...</p>
+          <div className="fee-management-loading">
+            <div className="fee-management-spinner"></div>
+            <p className="fee-management-loading-text">Loading...</p>
           </div>
         ) : (
-          <div className="row">
-            {/* Accumulated Fees */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
-                <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">Accumulated Fees</h5>
-                </div>
-                <div className="admin-dashboard-card-body">
-                  <div className="admin-dashboard-info-box mb-3">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <h6 className="mb-0">Fee Balance</h6>
-                      <button
-                        className="admin-dashboard-refresh-btn"
-                        onClick={handleRefreshFees}
-                        disabled={loading}
-                      >
-                        Refresh
-                      </button>
-                    </div>
-                    <p className="mb-0">
-                      <strong>{tokenSymbols.token0}:</strong> {accumulatedFees.fees0}
-                    </p>
-                    <p className="mb-0">
-                      <strong>{tokenSymbols.token1}:</strong> {accumulatedFees.fees1}
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleCollectFees}>
-                    <h6 className="admin-dashboard-form-title">Collect Fees</h6>
-                    <div className="input-group mb-3">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter recipient address"
-                        value={recipientAddress}
-                        onChange={(e) => setRecipientAddress(e.target.value)}
-                        disabled={loading}
-                      />
-                    </div>
+          <div className="fee-management-row">
+            {[
+              /* Accumulated Fees */
+              <div className="fee-management-card" key="accumulated-fees-card">
+              <div className="fee-management-card-header">
+                <h5 className="fee-management-card-title">Accumulated Fees</h5>
+              </div>
+              <div className="fee-management-card-body">
+                <div className="fee-management-info-box">
+                  <div className="fee-management-info-box-header">
+                    <h6>Fee Balance</h6>
                     <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading || !recipientAddress || (accumulatedFees.fees0 === '0' && accumulatedFees.fees1 === '0')}
+                      className="fee-management-refresh-btn"
+                      onClick={handleRefreshFees}
+                      disabled={loading}
                     >
-                      {loading ? 'Processing...' : 'Collect Fees'}
+                      Refresh
                     </button>
-                  </form>
+                  </div>
+                  <p>
+                    <strong>{tokenSymbols.token0}:</strong> {accumulatedFees.fees0}
+                  </p>
+                  <p>
+                    <strong>{tokenSymbols.token1}:</strong> {accumulatedFees.fees1}
+                  </p>
                 </div>
+
+                <form onSubmit={handleCollectFees} className="fee-management-form">
+                  <h6 className="fee-management-form-title">Collect Fees</h6>
+                  <div className="fee-management-address-input">
+                    <input
+                      type="text"
+                      placeholder="Enter recipient address"
+                      value={recipientAddress}
+                      onChange={(e) => setRecipientAddress(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="fee-management-button"
+                    disabled={loading || !recipientAddress || (accumulatedFees.fees0 === '0' && accumulatedFees.fees1 === '0')}
+                  >
+                    {loading ? 'Processing...' : 'Collect Fees'}
+                  </button>
+                </form>
+                </div>
+              </div>,
+
+              /* Swap Fee Settings */
+              <div className="fee-management-card" key="swap-fee-settings-card">
+              <div className="fee-management-card-header">
+                <h5 className="fee-management-card-title">Swap Fee Settings</h5>
+              </div>
+              <div className="fee-management-card-body">
+                <div className="fee-management-info-box">
+                  <h6>Current Swap Fee</h6>
+                  <p>
+                    <strong>Rate:</strong> {currentSwapFee} basis points ({parseFloat(currentSwapFee) / 100}%)
+                  </p>
+                  <p className="fee-management-help-text">
+                    Note: 1 basis point = 0.01%
+                  </p>
+                </div>
+
+                <form onSubmit={handleSetSwapFee} className="fee-management-form">
+                  <h6 className="fee-management-form-title">Set New Swap Fee</h6>
+                  <div className="fee-management-input-group">
+                    <input
+                      type="number"
+                      className="fee-management-input"
+                      placeholder="Enter new swap fee (basis points, 0-100)"
+                      value={newSwapFee}
+                      onChange={(e) => setNewSwapFee(e.target.value)}
+                      min="0"
+                      max="100"
+                      disabled={loading}
+                    />
+                    <span className="fee-management-input-addon">basis points</span>
+                  </div>
+                  <p className="fee-management-help-text">
+                    Input value: {newSwapFee ? `${newSwapFee} basis points = ${parseFloat(newSwapFee) / 100}%` : 'Please enter a value'}
+                  </p>
+                  <button
+                    type="submit"
+                    className="fee-management-button"
+                    disabled={loading || !newSwapFee}
+                  >
+                    {loading ? 'Processing...' : 'Set Swap Fee'}
+                  </button>
+                </form>
               </div>
             </div>
-
-            {/* Swap Fee Settings */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
-                <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">Swap Fee Settings</h5>
-                </div>
-                <div className="admin-dashboard-card-body">
-                  <div className="admin-dashboard-info-box mb-3">
-                    <h6>Current Swap Fee</h6>
-                    <p className="mb-0">
-                      <strong>Rate:</strong> {currentSwapFee} basis points ({parseFloat(currentSwapFee) / 100}%)
-                    </p>
-                    <p className="mb-0 text-muted small">
-                      Note: 1 basis point = 0.01%
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleSetSwapFee}>
-                    <h6 className="admin-dashboard-form-title">Set New Swap Fee</h6>
-                    <div className="input-group mb-3">
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="Enter new swap fee (basis points, 0-100)"
-                        value={newSwapFee}
-                        onChange={(e) => setNewSwapFee(e.target.value)}
-                        min="0"
-                        max="100"
-                        disabled={loading}
-                      />
-                      <span className="input-group-text">basis points</span>
-                    </div>
-                    <p className="text-muted small mb-3">
-                      Input value: {newSwapFee ? `${newSwapFee} basis points = ${parseFloat(newSwapFee) / 100}%` : 'Please enter a value'}
-                    </p>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading || !newSwapFee}
-                    >
-                      {loading ? 'Processing...' : 'Set Swap Fee'}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
+            ]}
           </div>
         )}
       </div>

@@ -3,10 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import Header from '../components/Header';
 import { initializeContracts, formatTokenAmount } from '../utils/contracts';
-import '../dashboard.css';
-import '../modal.css';
-import '../input-group.css';
-import '../form.css';
+import '../token-management.css';
 
 const TokenManagement = () => {
   const navigate = useNavigate();
@@ -210,11 +207,11 @@ const TokenManagement = () => {
   return (
     <div>
       <Header address={address} isAdmin={true} />
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
-          <h1>Token Management</h1>
+      <div className="token-management-container">
+        <div className="token-management-header">
+          <h1 className="token-management-title">Token Management</h1>
           <button
-            className="dashboard-refresh-btn"
+            className="token-management-refresh-btn"
             onClick={loadTokenData}
             disabled={loading || dataLoading}
           >
@@ -227,10 +224,10 @@ const TokenManagement = () => {
         </div>
 
         {error && (
-          <div className="dashboard-error">
+          <div className="token-management-error">
             {error}
             <button
-              className="dashboard-refresh-btn ml-3"
+              className="token-management-refresh-btn"
               onClick={loadTokenData}
             >
               Retry
@@ -239,36 +236,38 @@ const TokenManagement = () => {
         )}
 
         {success && (
-          <div className="alert alert-success">
+          <div className="token-management-success">
             {success}
           </div>
         )}
 
         {dataLoading ? (
-          <div className="dashboard-loading">
-            <div className="dashboard-loading-spinner"></div>
-            <p className="mt-3">Loading token data...</p>
+          <div className="token-management-loading">
+            <div className="token-management-spinner"></div>
+            <p className="token-management-loading-text">Loading token data...</p>
           </div>
         ) : (
-          <div className="row">
+          <div>
             {/* Token Balances */}
-            <div className="col-md-12 mb-4">
-              <div className="dashboard-card">
-                <div className="dashboard-card-header">
-                  <h5>Token Balances</h5>
+            <div className="token-management-row">
+              <div className="token-management-card">
+                <div className="token-management-card-header">
+                  <h5 className="token-management-card-title">Token Balances</h5>
                 </div>
-                <div className="dashboard-card-body">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="dashboard-stat">
-                        <h6>{tokenData.btkSymbol} Balance</h6>
-                        <p><span className="dashboard-stat-value">{tokenData.btkBalance}</span> {tokenData.btkSymbol}</p>
+                <div className="token-management-card-body">
+                  <div className="token-management-balance-container">
+                    <div className="token-management-balance-item">
+                      <div className="token-management-balance-label">{tokenData.btkSymbol} Balance</div>
+                      <div>
+                        <span className="token-management-balance-value">{tokenData.btkBalance}</span>
+                        <span className="token-management-balance-symbol">{tokenData.btkSymbol}</span>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                      <div className="dashboard-stat">
-                        <h6>{tokenData.mtkSymbol} Balance</h6>
-                        <p><span className="dashboard-stat-value">{tokenData.mtkBalance}</span> {tokenData.mtkSymbol}</p>
+                    <div className="token-management-balance-item">
+                      <div className="token-management-balance-label">{tokenData.mtkSymbol} Balance</div>
+                      <div>
+                        <span className="token-management-balance-value">{tokenData.mtkBalance}</span>
+                        <span className="token-management-balance-symbol">{tokenData.mtkSymbol}</span>
                       </div>
                     </div>
                   </div>
@@ -276,20 +275,21 @@ const TokenManagement = () => {
               </div>
             </div>
 
-            {/* Mint Tokens */}
-            <div className="col-md-6 mb-4">
-              <div className="dashboard-card">
-                <div className="dashboard-card-header">
-                  <h5>Mint Tokens</h5>
+            {/* 铸造和转账卡片行 */}
+            <div className="token-management-row">
+              {/* Mint Tokens */}
+              <div className="token-management-card token-management-card-medium">
+                <div className="token-management-card-header">
+                  <h5 className="token-management-card-title">Mint Tokens</h5>
                 </div>
-                <div className="dashboard-card-body">
-                  <form onSubmit={handleMint}>
-                    <div className="mb-3">
-                      <label className="form-label">Select Token</label>
-                      <div className="d-flex">
-                        <div className="form-check me-3">
+                <div className="token-management-card-body">
+                  <form className="token-management-form" onSubmit={handleMint}>
+                    <div className="token-management-form-group">
+                      <label className="token-management-form-label">Select Token</label>
+                      <div className="token-management-radio-group">
+                        <div className="token-management-radio-item">
                           <input
-                            className="form-check-input"
+                            className="token-management-radio"
                             type="radio"
                             name="mintTokenType"
                             id="mintBTK"
@@ -298,13 +298,13 @@ const TokenManagement = () => {
                             onChange={() => setMintToken('btk')}
                             disabled={loading}
                           />
-                          <label className="form-check-label" htmlFor="mintBTK">
+                          <label htmlFor="mintBTK">
                             {tokenData.btkSymbol}
                           </label>
                         </div>
-                        <div className="form-check">
+                        <div className="token-management-radio-item">
                           <input
-                            className="form-check-input"
+                            className="token-management-radio"
                             type="radio"
                             name="mintTokenType"
                             id="mintMTK"
@@ -313,19 +313,19 @@ const TokenManagement = () => {
                             onChange={() => setMintToken('mtk')}
                             disabled={loading}
                           />
-                          <label className="form-check-label" htmlFor="mintMTK">
+                          <label htmlFor="mintMTK">
                             {tokenData.mtkSymbol}
                           </label>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mb-3">
-                      <label htmlFor="mintAmount" className="form-label">Mint Amount</label>
-                      <div className="input-group">
+                    <div className="token-management-form-group">
+                      <label htmlFor="mintAmount" className="token-management-form-label">Mint Amount</label>
+                      <div className="token-management-input-group">
                         <input
                           type="number"
-                          className="form-control"
+                          className="token-management-input"
                           id="mintAmount"
                           value={mintAmount}
                           onChange={(e) => setMintAmount(e.target.value)}
@@ -335,17 +335,17 @@ const TokenManagement = () => {
                           min="0"
                           required
                         />
-                        <span className="input-group-text">
+                        <span className="token-management-input-addon">
                           {mintToken === 'btk' ? tokenData.btkSymbol : tokenData.mtkSymbol}
                         </span>
                       </div>
                     </div>
 
-                    <div className="mb-3">
-                      <label htmlFor="mintTo" className="form-label">Recipient Address</label>
+                    <div className="token-management-form-group">
+                      <label htmlFor="mintTo" className="token-management-form-label">Recipient Address</label>
                       <input
                         type="text"
-                        className="form-control"
+                        className="token-management-address-input"
                         id="mintTo"
                         value={mintTo}
                         onChange={(e) => setMintTo(e.target.value)}
@@ -353,39 +353,35 @@ const TokenManagement = () => {
                         disabled={loading}
                         required
                       />
-                      <small className="form-text text-muted">
+                      <div className="token-management-help-text">
                         Enter the Ethereum address to receive the minted tokens
-                      </small>
+                      </div>
                     </div>
 
-                    <div className="d-grid gap-2">
-                      <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={loading}
-                      >
-                        {loading ? 'Processing...' : 'Mint Tokens'}
-                      </button>
-                    </div>
+                    <button
+                      type="submit"
+                      className="token-management-button"
+                      disabled={loading}
+                    >
+                      {loading ? 'Processing...' : 'Mint Tokens'}
+                    </button>
                   </form>
                 </div>
               </div>
-            </div>
 
-            {/* Transfer Tokens */}
-            <div className="col-md-6 mb-4">
-              <div className="dashboard-card">
-                <div className="dashboard-card-header">
-                  <h5>Transfer Tokens</h5>
+              {/* Transfer Tokens */}
+              <div className="token-management-card token-management-card-medium">
+                <div className="token-management-card-header">
+                  <h5 className="token-management-card-title">Transfer Tokens</h5>
                 </div>
-                <div className="dashboard-card-body">
-                  <form onSubmit={handleTransfer}>
-                    <div className="mb-3">
-                      <label className="form-label">Select Token</label>
-                      <div className="d-flex">
-                        <div className="form-check me-3">
+                <div className="token-management-card-body">
+                  <form className="token-management-form" onSubmit={handleTransfer}>
+                    <div className="token-management-form-group">
+                      <label className="token-management-form-label">Select Token</label>
+                      <div className="token-management-radio-group">
+                        <div className="token-management-radio-item">
                           <input
-                            className="form-check-input"
+                            className="token-management-radio"
                             type="radio"
                             name="transferTokenType"
                             id="transferBTK"
@@ -394,13 +390,13 @@ const TokenManagement = () => {
                             onChange={() => setTransferToken('btk')}
                             disabled={loading}
                           />
-                          <label className="form-check-label" htmlFor="transferBTK">
+                          <label htmlFor="transferBTK">
                             {tokenData.btkSymbol}
                           </label>
                         </div>
-                        <div className="form-check">
+                        <div className="token-management-radio-item">
                           <input
-                            className="form-check-input"
+                            className="token-management-radio"
                             type="radio"
                             name="transferTokenType"
                             id="transferMTK"
@@ -409,19 +405,19 @@ const TokenManagement = () => {
                             onChange={() => setTransferToken('mtk')}
                             disabled={loading}
                           />
-                          <label className="form-check-label" htmlFor="transferMTK">
+                          <label htmlFor="transferMTK">
                             {tokenData.mtkSymbol}
                           </label>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mb-3">
-                      <label htmlFor="transferAmount" className="form-label">Transfer Amount</label>
-                      <div className="input-group">
+                    <div className="token-management-form-group">
+                      <label htmlFor="transferAmount" className="token-management-form-label">Transfer Amount</label>
+                      <div className="token-management-input-group">
                         <input
                           type="number"
-                          className="form-control"
+                          className="token-management-input"
                           id="transferAmount"
                           value={transferAmount}
                           onChange={(e) => setTransferAmount(e.target.value)}
@@ -431,20 +427,20 @@ const TokenManagement = () => {
                           min="0"
                           required
                         />
-                        <span className="input-group-text">
+                        <span className="token-management-input-addon">
                           {transferToken === 'btk' ? tokenData.btkSymbol : tokenData.mtkSymbol}
                         </span>
                       </div>
-                      <small className="form-text text-muted">
+                      <div className="token-management-help-text">
                         Current balance: {transferToken === 'btk' ? tokenData.btkBalance : tokenData.mtkBalance} {transferToken === 'btk' ? tokenData.btkSymbol : tokenData.mtkSymbol}
-                      </small>
+                      </div>
                     </div>
 
-                    <div className="mb-3">
-                      <label htmlFor="transferTo" className="form-label">Recipient Address</label>
+                    <div className="token-management-form-group">
+                      <label htmlFor="transferTo" className="token-management-form-label">Recipient Address</label>
                       <input
                         type="text"
-                        className="form-control"
+                        className="token-management-address-input"
                         id="transferTo"
                         value={transferTo}
                         onChange={(e) => setTransferTo(e.target.value)}
@@ -452,20 +448,18 @@ const TokenManagement = () => {
                         disabled={loading}
                         required
                       />
-                      <small className="form-text text-muted">
+                      <div className="token-management-help-text">
                         Enter the Ethereum address to receive the transferred tokens
-                      </small>
+                      </div>
                     </div>
 
-                    <div className="d-grid gap-2">
-                      <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={loading}
-                      >
-                        {loading ? 'Processing...' : 'Transfer Tokens'}
-                      </button>
-                    </div>
+                    <button
+                      type="submit"
+                      className="token-management-button"
+                      disabled={loading}
+                    >
+                      {loading ? 'Processing...' : 'Transfer Tokens'}
+                    </button>
                   </form>
                 </div>
               </div>

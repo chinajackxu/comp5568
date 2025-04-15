@@ -236,109 +236,156 @@ const AdminDashboard = () => {
             <p className="admin-dashboard-loading-text">Loading dashboard data...</p>
           </div>
         ) : (
-          <div className="row">
-            {/* 系统概览 */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
+          <div>
+            {/* 第一行卡片 - 3个卡片 */}
+            <div className="admin-dashboard-row">
+              {/* 流动性卡片 */}
+              <div className="admin-dashboard-card admin-dashboard-card-small">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">System Overview</h5>
+                  <h5 className="admin-dashboard-card-title">Total Liquidity</h5>
+                  <button
+                    className="admin-dashboard-add-liquidity-btn"
+                    onClick={() => setShowAddLiquidityModal(true)}
+                    disabled={loading || dataLoading || dashboardData.paused}
+                    title={dashboardData.paused ? 'Pool is paused, cannot add liquidity' : loading ? 'Processing...' : ''}
+                  >
+                    {loading ? 'Processing...' : 'Add'}
+                  </button>
                 </div>
                 <div className="admin-dashboard-card-body">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="admin-dashboard-stat-title">Total Liquidity in Pool</h6>
-                    <button
-                      className="admin-dashboard-add-liquidity-btn"
-                      onClick={() => setShowAddLiquidityModal(true)}
-                      disabled={loading || dataLoading || dashboardData.paused}
-                      title={dashboardData.paused ? 'Pool is paused, cannot add liquidity' : loading ? 'Processing...' : ''}
-                    >
-                      {loading ? 'Processing...' : 'Add Liquidity'}
-                    </button>
-                  </div>
-                  <div className="admin-dashboard-stat">
-                    <p><span className="admin-dashboard-stat-value">{dashboardData.balances.balance0}</span> <span className="admin-dashboard-stat-label">{dashboardData.token0Symbol}</span></p>
-                    <p><span className="admin-dashboard-stat-value">{dashboardData.balances.balance1}</span> <span className="admin-dashboard-stat-label">{dashboardData.token1Symbol}</span></p>
-                  </div>
-
-                  <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">Current Parameters</h6>
-                    <p>Swap Fee: <span className="admin-dashboard-stat-value">{dashboardData.swapFee}</span></p>
-                    <p>Max Price Deviation: <span className="admin-dashboard-stat-value">{dashboardData.maxPriceDeviation}</span></p>
-                    <p>Pool Status: <span className={`admin-dashboard-status ${dashboardData.paused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
-                      {dashboardData.paused ? 'Paused' : 'Active'}
-                    </span></p>
-                  </div>
-
-                  <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">Current Exchange Rate</h6>
-                    <p><span className="admin-dashboard-stat-value">1</span> <span className="admin-dashboard-stat-label">{dashboardData.token0Symbol}</span> = <span className="admin-dashboard-stat-value">{dashboardData.rate}</span> <span className="admin-dashboard-stat-label">{dashboardData.token1Symbol}</span></p>
-                    <small className="admin-dashboard-note">(Note: Now using constant product model, displaying raw exchange rate)</small>
-                  </div>
-
-                  <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">NFT Positions</h6>
-                    <p>Total Supply: <span className="admin-dashboard-stat-value">{dashboardData.totalSupply}</span></p>
+                  <div className="admin-dashboard-big-number">
+                    <div className="admin-dashboard-token-amount">
+                      <span className="admin-dashboard-token-value">{dashboardData.balances.balance0}</span>
+                      <span className="admin-dashboard-token-symbol">{dashboardData.token0Symbol}</span>
+                    </div>
+                    <div className="admin-dashboard-token-amount">
+                      <span className="admin-dashboard-token-value">{dashboardData.balances.balance1}</span>
+                      <span className="admin-dashboard-token-symbol">{dashboardData.token1Symbol}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* 累积手续费 */}
-            <div className="col-md-6 mb-4">
-              <div className="admin-dashboard-card">
+              {/* 汇率卡片 */}
+              <div className="admin-dashboard-card admin-dashboard-card-small">
+                <div className="admin-dashboard-card-header">
+                  <h5 className="admin-dashboard-card-title">Exchange Rate</h5>
+                </div>
+                <div className="admin-dashboard-card-body">
+                  <div className="admin-dashboard-exchange-rate">
+                    <div className="admin-dashboard-rate-display">
+                      <span>1 {dashboardData.token0Symbol} = {dashboardData.rate} {dashboardData.token1Symbol}</span>
+                    </div>
+                    <small className="admin-dashboard-note">Using constant product model</small>
+                  </div>
+                </div>
+              </div>
+
+              {/* 手续费卡片 */}
+              <div className="admin-dashboard-card admin-dashboard-card-small">
                 <div className="admin-dashboard-card-header">
                   <h5 className="admin-dashboard-card-title">Accumulated Fees</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
-                  <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">Accumulated Fees</h6>
-                    <p><span className="admin-dashboard-stat-value">{dashboardData.fees.fees0}</span> <span className="admin-dashboard-stat-label">{dashboardData.token0Symbol}</span></p>
-                    <p><span className="admin-dashboard-stat-value">{dashboardData.fees.fees1}</span> <span className="admin-dashboard-stat-label">{dashboardData.token1Symbol}</span></p>
+                  <div className="admin-dashboard-fees">
+                    <div className="admin-dashboard-token-amount">
+                      <span className="admin-dashboard-token-value">{dashboardData.fees.fees0}</span>
+                      <span className="admin-dashboard-token-symbol">{dashboardData.token0Symbol}</span>
+                    </div>
+                    <div className="admin-dashboard-token-amount">
+                      <span className="admin-dashboard-token-value">{dashboardData.fees.fees1}</span>
+                      <span className="admin-dashboard-token-symbol">{dashboardData.token1Symbol}</span>
+                    </div>
+                    <button
+                      className="admin-dashboard-manage-btn"
+                      onClick={() => navigate('/admin/fees')}
+                    >
+                      Manage Fees
+                    </button>
                   </div>
-
-                  <button
-                    className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
-                    onClick={() => navigate('/admin/fees')}
-                  >
-                    Manage Fees
-                  </button>
                 </div>
               </div>
             </div>
 
-            {/* 快速操作 */}
-            <div className="col-md-12 mb-4">
-              <div className="admin-dashboard-card">
+            {/* 第二行卡片 - 2个卡片 */}
+            <div className="admin-dashboard-row">
+              {/* 池状态卡片 */}
+              <div className="admin-dashboard-card admin-dashboard-card-medium">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">Quick Actions</h5>
+                  <h5 className="admin-dashboard-card-title">Pool Status</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
-                  <div className="admin-dashboard-actions">
+                  <div className="admin-dashboard-status-display">
+                    <span className={`admin-dashboard-status ${dashboardData.paused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
+                      {dashboardData.paused ? 'Paused' : 'Active'}
+                    </span>
+                  </div>
+                  <div className="admin-dashboard-parameters">
+                    <div className="admin-dashboard-parameter">
+                      <span className="admin-dashboard-parameter-label">Swap Fee:</span>
+                      <span className="admin-dashboard-parameter-value">{dashboardData.swapFee}</span>
+                    </div>
+                    <div className="admin-dashboard-parameter">
+                      <span className="admin-dashboard-parameter-label">Max Price Deviation:</span>
+                      <span className="admin-dashboard-parameter-value">{dashboardData.maxPriceDeviation}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* NFT头寈卡片 */}
+              <div className="admin-dashboard-card admin-dashboard-card-medium">
+                <div className="admin-dashboard-card-header">
+                  <h5 className="admin-dashboard-card-title">NFT Positions</h5>
+                </div>
+                <div className="admin-dashboard-card-body">
+                  <div className="admin-dashboard-nft-info">
+                    <div className="admin-dashboard-nft-stat">
+                      <span className="admin-dashboard-nft-label">Total Supply:</span>
+                      <span className="admin-dashboard-nft-value">{dashboardData.totalSupply}</span>
+                    </div>
                     <button
-                      className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
-                      onClick={() => navigate('/admin/tokens')}
-                    >
-                      Token Management
-                    </button>
-                    <button
-                      className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
-                      onClick={() => window.location.href = '/admin/pool-settings'}
-                    >
-                      Pool Settings
-                    </button>
-                    <button
-                      className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
+                      className="admin-dashboard-manage-btn"
                       onClick={() => navigate('/admin/positions')}
                     >
-                      NFT Position Management
-                    </button>
-                    <button
-                      className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
-                      onClick={() => navigate('/admin/fees')}
-                    >
-                      Fee Management
+                      Manage Positions
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 快速操作卡片 */}
+            <div className="admin-dashboard-card">
+              <div className="admin-dashboard-card-header">
+                <h5 className="admin-dashboard-card-title">Quick Actions</h5>
+              </div>
+              <div className="admin-dashboard-card-body">
+                <div className="admin-dashboard-quick-actions">
+                  <button
+                    className="admin-dashboard-action-btn"
+                    onClick={() => navigate('/admin/tokens')}
+                  >
+                    Token Management
+                  </button>
+                  <button
+                    className="admin-dashboard-action-btn"
+                    onClick={() => window.location.href = '/admin/pool-settings'}
+                  >
+                    Pool Settings
+                  </button>
+                  <button
+                    className="admin-dashboard-action-btn"
+                    onClick={() => navigate('/admin/positions')}
+                  >
+                    NFT Position Management
+                  </button>
+                  <button
+                    className="admin-dashboard-action-btn"
+                    onClick={() => navigate('/admin/fees')}
+                  >
+                    Fee Management
+                  </button>
                 </div>
               </div>
             </div>

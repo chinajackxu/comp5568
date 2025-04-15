@@ -27,7 +27,6 @@ const LiquidityManagement = () => {
   const [mtkAmount, setMtkAmount] = useState('');
   const [slippage, setSlippage] = useState('1.0');
   const [deadline, setDeadline] = useState('20');
-  const [approving, setApproving] = useState(false);
   const [addingLiquidity, setAddingLiquidity] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [selectedTokenId, setSelectedTokenId] = useState(null);
@@ -126,99 +125,7 @@ const LiquidityManagement = () => {
     handleMtkAmountChange(maxMtk.toString());
   };
 
-  // 授权BTK
-  const handleApproveBtk = async () => {
-    if (!btkAmount || parseFloat(btkAmount) <= 0) {
-      setError('Please enter a valid BTK amount');
-      return;
-    }
 
-    setApproving(true);
-    setError('');
-
-    try {
-      const { btkContract, poolContract } = await initializeContracts();
-
-      // 计算授权金额（添加一些额外量，以防止精度问题）
-      const amountToApprove = ethers.utils.parseEther((parseFloat(btkAmount) * 1.05).toString());
-
-      // 发送授权交易
-      const tx = await btkContract.approve(poolContract.address, amountToApprove);
-      await tx.wait();
-
-      // 更新授权额度
-      const newAllowance = await btkContract.allowance(address, poolContract.address);
-      setAllowances(prev => ({
-        ...prev,
-        btk: ethers.utils.formatUnits(newAllowance, 18)
-      }));
-
-      setSuccess('BTK approved successfully');
-    } catch (error) {
-      console.error('BTK approval failed:', error);
-
-      // 处理特定类型的授权错误
-      if (error.code === 4001) {
-        // 用户取消授权
-        setError('You cancelled the approval.');
-      } else if (error.message && error.message.includes('insufficient funds')) {
-        // 余额不足
-        setError('Approval failed: Insufficient funds, please ensure you have enough ETH for gas.');
-      } else {
-        // 其他错误
-        setError(error.message || 'BTK approval failed, please try again');
-      }
-    } finally {
-      setApproving(false);
-    }
-  };
-
-  // 授权MTK
-  const handleApproveMtk = async () => {
-    if (!mtkAmount || parseFloat(mtkAmount) <= 0) {
-      setError('Please enter a valid MTK amount');
-      return;
-    }
-
-    setApproving(true);
-    setError('');
-
-    try {
-      const { mtkContract, poolContract } = await initializeContracts();
-
-      // 计算授权金额（添加一些额外量，以防止精度问题）
-      const amountToApprove = ethers.utils.parseEther((parseFloat(mtkAmount) * 1.05).toString());
-
-      // 发送授权交易
-      const tx = await mtkContract.approve(poolContract.address, amountToApprove);
-      await tx.wait();
-
-      // 更新授权额度
-      const newAllowance = await mtkContract.allowance(address, poolContract.address);
-      setAllowances(prev => ({
-        ...prev,
-        mtk: ethers.utils.formatUnits(newAllowance, 18)
-      }));
-
-      setSuccess('MTK approved successfully');
-    } catch (error) {
-      console.error('MTK approval failed:', error);
-
-      // 处理特定类型的授权错误
-      if (error.code === 4001) {
-        // 用户取消授权
-        setError('You cancelled the approval.');
-      } else if (error.message && error.message.includes('insufficient funds')) {
-        // 余额不足
-        setError('Approval failed: Insufficient funds, please ensure you have enough ETH for gas.');
-      } else {
-        // 其他错误
-        setError(error.message || 'MTK approval failed, please try again');
-      }
-    } finally {
-      setApproving(false);
-    }
-  };
 
   // 转让流动性
   const handleTransferLiquidity = (tokenId) => {
@@ -367,17 +274,6 @@ const LiquidityManagement = () => {
       return;
     }
 
-    // 检查授权额度
-    if (parseFloat(btkAmount) > parseFloat(allowances.btk)) {
-      setError('Please approve BTK first');
-      return;
-    }
-
-    if (parseFloat(mtkAmount) > parseFloat(allowances.mtk)) {
-      setError('Please approve MTK first');
-      return;
-    }
-
     // 检查余额
     if (parseFloat(btkAmount) > parseFloat(balances.btk)) {
       setError('Insufficient BTK balance');
@@ -394,7 +290,51 @@ const LiquidityManagement = () => {
     setSuccess('');
 
     try {
-      const { poolContract, nftContract } = await initializeContracts();
+      // 初始化合约
+      let contracts = await initializeContracts();
+      let { poolContract, btkContract, mtkContract } = contracts;
+
+      // 自动检查并执行 BTK 授权
+      if (parseFloat(btkAmount) > parseFloat(allowances.btk)) {
+        setSuccess('Approving BTK...');
+        // 计算授权金额（添加一些额外量，以防止精度问题）
+        const amountToApprove = ethers.utils.parseEther((parseFloat(btkAmount) * 1.05).toString());
+
+        // 发送授权交易
+        const approveTx = await btkContract.approve(poolContract.address, amountToApprove);
+        await approveTx.wait();
+
+        // 更新授权额度
+        const newAllowance = await btkContract.allowance(address, poolContract.address);
+        setAllowances(prev => ({
+          ...prev,
+          btk: ethers.utils.formatUnits(newAllowance, 18)
+        }));
+
+        setSuccess('BTK approved successfully');
+      }
+
+      // 自动检查并执行 MTK 授权
+      if (parseFloat(mtkAmount) > parseFloat(allowances.mtk)) {
+        setSuccess('Approving MTK...');
+        // 计算授权金额（添加一些额外量，以防止精度问题）
+        const amountToApprove = ethers.utils.parseEther((parseFloat(mtkAmount) * 1.05).toString());
+
+        // 发送授权交易
+        const approveTx = await mtkContract.approve(poolContract.address, amountToApprove);
+        await approveTx.wait();
+
+        // 更新授权额度
+        const newAllowance = await mtkContract.allowance(address, poolContract.address);
+        setAllowances(prev => ({
+          ...prev,
+          mtk: ethers.utils.formatUnits(newAllowance, 18)
+        }));
+
+        setSuccess('MTK approved successfully');
+      }
+
+      setSuccess('Adding liquidity...');
 
       // 计算滑点
       const slippagePercent = parseFloat(slippage) / 100;
@@ -424,9 +364,9 @@ const LiquidityManagement = () => {
       await tx.wait();
 
       // 更新余额
-      const { btkContract, mtkContract } = await initializeContracts();
-      const newBtkBalance = await btkContract.balanceOf(address);
-      const newMtkBalance = await mtkContract.balanceOf(address);
+      contracts = await initializeContracts();
+      const newBtkBalance = await contracts.btkContract.balanceOf(address);
+      const newMtkBalance = await contracts.mtkContract.balanceOf(address);
 
       setBalances({
         btk: ethers.utils.formatUnits(newBtkBalance, 18),
@@ -434,8 +374,8 @@ const LiquidityManagement = () => {
       });
 
       // 更新授权额度
-      const newBtkAllowance = await btkContract.allowance(address, poolContract.address);
-      const newMtkAllowance = await mtkContract.allowance(address, poolContract.address);
+      const newBtkAllowance = await contracts.btkContract.allowance(address, contracts.poolContract.address);
+      const newMtkAllowance = await contracts.mtkContract.allowance(address, contracts.poolContract.address);
 
       setAllowances({
         btk: ethers.utils.formatUnits(newBtkAllowance, 18),
@@ -443,7 +383,7 @@ const LiquidityManagement = () => {
       });
 
       // 重新加载头寈
-      await loadUserPositions(nftContract, poolContract, address);
+      await loadUserPositions(contracts.nftContract, contracts.poolContract, address);
 
       // 清空输入
       setBtkAmount('');
@@ -737,26 +677,6 @@ const LiquidityManagement = () => {
                 </div>
 
                 <div className="form-actions">
-                  {parseFloat(btkAmount) > parseFloat(allowances.btk) ? (
-                    <button
-                      className="liquidity-action-btn primary"
-                      onClick={handleApproveBtk}
-                      disabled={approving || !btkAmount || parseFloat(btkAmount) <= 0}
-                    >
-                      {approving ? 'Approving...' : 'Approve BTK'}
-                    </button>
-                  ) : null}
-
-                  {parseFloat(mtkAmount) > parseFloat(allowances.mtk) ? (
-                    <button
-                      className="liquidity-action-btn primary"
-                      onClick={handleApproveMtk}
-                      disabled={approving || !mtkAmount || parseFloat(mtkAmount) <= 0}
-                    >
-                      {approving ? 'Approving...' : 'Approve MTK'}
-                    </button>
-                  ) : null}
-
                   <button
                     className="liquidity-action-btn primary"
                     onClick={handleAddLiquidity}
@@ -764,9 +684,7 @@ const LiquidityManagement = () => {
                       !btkAmount ||
                       !mtkAmount ||
                       parseFloat(btkAmount) <= 0 ||
-                      parseFloat(mtkAmount) <= 0 ||
-                      parseFloat(btkAmount) > parseFloat(allowances.btk) ||
-                      parseFloat(mtkAmount) > parseFloat(allowances.mtk)}
+                      parseFloat(mtkAmount) <= 0}
                   >
                     {addingLiquidity ? 'Adding...' : 'Add Liquidity'}
                   </button>
