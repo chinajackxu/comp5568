@@ -1,0 +1,126 @@
+.transaction-history-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.transaction-history-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.transaction-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.transaction-history-header {
+  display: flex;
+  background-color: #f8f9fa;
+  font-weight: bold;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.transaction-history-row {
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.transaction-history-row:hover {
+  background-color: #f8f9fa;
+}
+
+.transaction-history-cell {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.transaction-status.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.transaction-status.failed {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.transaction-link-btn {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.transaction-link-btn:hover {
+  background-color: #0069d9;
+  text-decoration: none;
+  color: white;
+}
+
+.transaction-history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #e9ecef;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  margin: 0 15px;
+  color: #6c757d;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .transaction-history-header,
+  .transaction-history-row {
+    font-size: 0.85rem;
+  }
+  
+  .transaction-history-cell {
+    padding: 8px 4px;
+  }
+  
+  .transaction-link-btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}

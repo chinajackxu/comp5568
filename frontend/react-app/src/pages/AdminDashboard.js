@@ -135,8 +135,8 @@ const AdminDashboard = () => {
       });
 
     } catch (error) {
-      console.error('加载仪表盘数据失败:', error);
-      setError('加载仪表盘数据失败，请刷新页面重试');
+      console.error('Failed to load dashboard data:', error);
+      setError('Failed to load dashboard data, please refresh the page and try again');
     } finally {
       setDataLoading(false);
     }
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       if (!contracts) {
-        throw new Error('合约未初始化，请刷新页面重试');
+        throw new Error('Contracts not initialized, please refresh the page and try again');
       }
 
       const { poolContract, btkContract, mtkContract } = contracts;
@@ -157,21 +157,21 @@ const AdminDashboard = () => {
       console.log('Amount1:', amount1.toString());
 
       // 授权池合约使用代币
-      console.log('授权BTK...');
+      console.log('Approving BTK...');
       const approveTx0 = await btkContract.approve(poolContract.address, amount0);
       await approveTx0.wait();
-      console.log('BTK授权成功');
+      console.log('BTK approved successfully');
 
-      console.log('授权MTK...');
+      console.log('Approving MTK...');
       const approveTx1 = await mtkContract.approve(poolContract.address, amount1);
       await approveTx1.wait();
-      console.log('MTK授权成功');
+      console.log('MTK approved successfully');
 
       // 添加流动性
-      console.log('添加流动性...');
+      console.log('Adding liquidity...');
       const tx = await poolContract.addLiquidity(amount0, amount1, minAmount0, minAmount1, deadline);
       const receipt = await tx.wait();
-      console.log('添加流动性成功');
+      console.log('Liquidity added successfully');
 
       // 从事件中获取tokenId
       const addLiquidityEvent = receipt.events.find(event =>
@@ -181,9 +181,9 @@ const AdminDashboard = () => {
       let tokenId;
       if (addLiquidityEvent && addLiquidityEvent.args) {
         tokenId = addLiquidityEvent.args.tokenId;
-        console.log('创建NFT头寸ID:', tokenId.toString());
+        console.log('Created NFT position ID:', tokenId.toString());
       } else {
-        console.log('无法获取头寸ID，但流动性已添加');
+        console.log('Unable to get position ID, but liquidity has been added');
         tokenId = 'unknown';
       }
 
@@ -192,7 +192,7 @@ const AdminDashboard = () => {
 
       return tokenId;
     } catch (error) {
-      console.error('添加流动性失败:', error);
+      console.error('Failed to add liquidity:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -204,7 +204,7 @@ const AdminDashboard = () => {
       <Header address={address} isAdmin={true} />
       <div className="admin-dashboard-container">
         <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">管理员仪表盘</h1>
+          <h1 className="admin-dashboard-title">Admin Dashboard</h1>
           <button
             className="admin-dashboard-refresh-btn"
             onClick={loadDashboardData}
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
               <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
               <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
             </svg>
-            刷新数据
+            Refresh Data
           </button>
         </div>
 
@@ -225,7 +225,7 @@ const AdminDashboard = () => {
               className="admin-dashboard-error-retry"
               onClick={loadDashboardData}
             >
-              重试
+              Retry
             </button>
           </div>
         )}
@@ -233,7 +233,7 @@ const AdminDashboard = () => {
         {dataLoading ? (
           <div className="admin-dashboard-loading">
             <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">加载仪表盘数据...</p>
+            <p className="admin-dashboard-loading-text">Loading dashboard data...</p>
           </div>
         ) : (
           <div className="row">
@@ -241,18 +241,18 @@ const AdminDashboard = () => {
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">系统概览</h5>
+                  <h5 className="admin-dashboard-card-title">System Overview</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="admin-dashboard-stat-title">池中的总流动性</h6>
+                    <h6 className="admin-dashboard-stat-title">Total Liquidity in Pool</h6>
                     <button
                       className="admin-dashboard-add-liquidity-btn"
                       onClick={() => setShowAddLiquidityModal(true)}
                       disabled={loading || dataLoading || dashboardData.paused}
-                      title={dashboardData.paused ? '池已暂停，无法添加流动性' : loading ? '正在处理中...' : ''}
+                      title={dashboardData.paused ? 'Pool is paused, cannot add liquidity' : loading ? 'Processing...' : ''}
                     >
-                      {loading ? '处理中...' : '添加流动性'}
+                      {loading ? 'Processing...' : 'Add Liquidity'}
                     </button>
                   </div>
                   <div className="admin-dashboard-stat">
@@ -261,23 +261,23 @@ const AdminDashboard = () => {
                   </div>
 
                   <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">当前参数</h6>
-                    <p>交易费率: <span className="admin-dashboard-stat-value">{dashboardData.swapFee}</span></p>
-                    <p>最大价格偏离: <span className="admin-dashboard-stat-value">{dashboardData.maxPriceDeviation}</span></p>
-                    <p>池状态: <span className={`admin-dashboard-status ${dashboardData.paused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
-                      {dashboardData.paused ? '已暂停' : '活跃'}
+                    <h6 className="admin-dashboard-stat-title">Current Parameters</h6>
+                    <p>Swap Fee: <span className="admin-dashboard-stat-value">{dashboardData.swapFee}</span></p>
+                    <p>Max Price Deviation: <span className="admin-dashboard-stat-value">{dashboardData.maxPriceDeviation}</span></p>
+                    <p>Pool Status: <span className={`admin-dashboard-status ${dashboardData.paused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
+                      {dashboardData.paused ? 'Paused' : 'Active'}
                     </span></p>
                   </div>
 
                   <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">当前汇率</h6>
+                    <h6 className="admin-dashboard-stat-title">Current Exchange Rate</h6>
                     <p><span className="admin-dashboard-stat-value">1</span> <span className="admin-dashboard-stat-label">{dashboardData.token0Symbol}</span> = <span className="admin-dashboard-stat-value">{dashboardData.rate}</span> <span className="admin-dashboard-stat-label">{dashboardData.token1Symbol}</span></p>
-                    <small className="admin-dashboard-note">(注意: 现在使用恒定乘积模型，直接显示原始汇率)</small>
+                    <small className="admin-dashboard-note">(Note: Now using constant product model, displaying raw exchange rate)</small>
                   </div>
 
                   <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">NFT头寸</h6>
-                    <p>总供应量: <span className="admin-dashboard-stat-value">{dashboardData.totalSupply}</span></p>
+                    <h6 className="admin-dashboard-stat-title">NFT Positions</h6>
+                    <p>Total Supply: <span className="admin-dashboard-stat-value">{dashboardData.totalSupply}</span></p>
                   </div>
                 </div>
               </div>
@@ -287,11 +287,11 @@ const AdminDashboard = () => {
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">累积手续费</h5>
+                  <h5 className="admin-dashboard-card-title">Accumulated Fees</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <div className="admin-dashboard-stat">
-                    <h6 className="admin-dashboard-stat-title">累积手续费</h6>
+                    <h6 className="admin-dashboard-stat-title">Accumulated Fees</h6>
                     <p><span className="admin-dashboard-stat-value">{dashboardData.fees.fees0}</span> <span className="admin-dashboard-stat-label">{dashboardData.token0Symbol}</span></p>
                     <p><span className="admin-dashboard-stat-value">{dashboardData.fees.fees1}</span> <span className="admin-dashboard-stat-label">{dashboardData.token1Symbol}</span></p>
                   </div>
@@ -300,7 +300,7 @@ const AdminDashboard = () => {
                     className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
                     onClick={() => navigate('/admin/fees')}
                   >
-                    管理手续费
+                    Manage Fees
                   </button>
                 </div>
               </div>
@@ -310,7 +310,7 @@ const AdminDashboard = () => {
             <div className="col-md-12 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">快速操作</h5>
+                  <h5 className="admin-dashboard-card-title">Quick Actions</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <div className="admin-dashboard-actions">
@@ -318,25 +318,25 @@ const AdminDashboard = () => {
                       className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
                       onClick={() => navigate('/admin/tokens')}
                     >
-                      代币管理
+                      Token Management
                     </button>
                     <button
                       className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
                       onClick={() => window.location.href = '/admin/pool-settings'}
                     >
-                      池参数设置
+                      Pool Settings
                     </button>
                     <button
                       className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
                       onClick={() => navigate('/admin/positions')}
                     >
-                      NFT头寸管理
+                      NFT Position Management
                     </button>
                     <button
                       className="admin-dashboard-action-btn admin-dashboard-action-btn-primary"
                       onClick={() => navigate('/admin/fees')}
                     >
-                      手续费管理
+                      Fee Management
                     </button>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* 添加流动性模态框 */}
+      {/* Add Liquidity Modal */}
       <AddLiquidityModal
         show={showAddLiquidityModal}
         onClose={() => setShowAddLiquidityModal(false)}

@@ -8,12 +8,12 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 检查是否已经登录
+    // Check if already logged in
     const userAddress = localStorage.getItem('userAddress');
     const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
     if (userAddress) {
-      // 如果已经登录，自动跳转
+      // If already logged in, automatically redirect
       if (isAdmin) {
         navigate('/admin');
       } else {
@@ -27,25 +27,25 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // 初始化合约
+      // Initialize contracts
       const { address, accessContract } = await initializeContracts();
 
-      // 检查用户是否为管理员
+      // Check if user is admin
       const isAdmin = await checkIsAdmin(accessContract, address);
 
-      // 将用户信息存储在localStorage中
+      // Store user information in localStorage
       localStorage.setItem('userAddress', address);
       localStorage.setItem('isAdmin', isAdmin);
 
-      // 根据用户角色跳转到相应页面
+      // Redirect to appropriate page based on user role
       if (isAdmin) {
         navigate('/admin');
       } else {
         navigate('/user');
       }
     } catch (error) {
-      console.error('登录失败:', error);
-      setError(error.message || '登录失败，请重试');
+      console.error('Login failed:', error);
+      setError(error.message || 'Login failed, please try again');
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ const LoginPage = () => {
         <h1>OnlyDex</h1>
       </div>
       <div className="login-form">
-        <h2>连接钱包</h2>
+        <h2>Connect Wallet</h2>
 
         {error && (
           <div className="alert alert-danger">
@@ -66,7 +66,7 @@ const LoginPage = () => {
         )}
 
         <p className="text-center mb-3">
-          请使用MetaMask连接到Sepolia测试网络
+          Please connect to the Sepolia test network using MetaMask
         </p>
 
         <button
@@ -74,12 +74,12 @@ const LoginPage = () => {
           onClick={handleLogin}
           disabled={loading}
         >
-          {loading ? '连接中...' : '连接MetaMask'}
+          {loading ? 'Connecting...' : 'Connect MetaMask'}
         </button>
 
         <div className="text-center mt-3">
           <small>
-            连接钱包后，系统将自动检测您的权限并跳转到相应页面
+            After connecting your wallet, the system will automatically detect your permissions and redirect you to the appropriate page
           </small>
         </div>
       </div>

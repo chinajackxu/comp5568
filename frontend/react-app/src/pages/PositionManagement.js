@@ -19,7 +19,7 @@ const PositionManagement = () => {
   const [txHash, setTxHash] = useState('');
   const [networkName, setNetworkName] = useState('');
 
-  // 头寸管理状态
+  // Position management state
   const [tokenId, setTokenId] = useState('');
   const [ownerAddress, setOwnerAddress] = useState('');
   const [positionInfo, setPositionInfo] = useState(null);
@@ -29,19 +29,19 @@ const PositionManagement = () => {
   const [userAddress, setUserAddress] = useState('');
   const [userTokens, setUserTokens] = useState([]);
 
-  // 初始化
+  // Initialization
   useEffect(() => {
     const checkAdminAndLoadData = async () => {
       try {
-        // 初始化合约
+        // Initialize contracts
         const contractsResult = await initializeContracts();
         const { address, accessContract } = contractsResult;
 
-        // 检查是否为管理员
+        // Check if admin
         const isAdmin = await accessContract.isAdmin(address);
 
         if (!isAdmin) {
-          console.log('非管理员账户，重定向到管理面板');
+          console.log('Not an admin account, redirecting to admin panel');
           navigate('/admin');
           return;
         }
@@ -50,18 +50,18 @@ const PositionManagement = () => {
         setIsAdmin(isAdmin);
         setContracts(contractsResult);
 
-        // 获取网络名称
+        // Get network name
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const network = await provider.getNetwork();
         setNetworkName(network.name);
 
-        // 设置默认池地址
+        // Set default pool address
         setPoolAddress(contractsResult.poolContract.address);
 
         setDataLoading(false);
       } catch (error) {
-        console.error('初始化失败:', error);
-        setError('连接钱包或加载合约失败，请刷新页面重试');
+        console.error('Initialization failed:', error);
+        setError('Failed to connect wallet or load contracts, please refresh the page and try again');
         setDataLoading(false);
       }
     };
@@ -69,7 +69,7 @@ const PositionManagement = () => {
     checkAdminAndLoadData();
   }, [navigate]);
 
-  // 查询NFT所有者
+  // Query NFT owner
   const handleQueryOwner = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -80,11 +80,11 @@ const PositionManagement = () => {
 
     try {
       if (!tokenId || isNaN(parseInt(tokenId))) {
-        throw new Error('请输入有效的Token ID');
+        throw new Error('Please enter a valid Token ID');
       }
 
       if (!contracts || !contracts.positionContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { positionContract } = contracts;
@@ -92,26 +92,26 @@ const PositionManagement = () => {
       try {
         const owner = await positionContract.ownerOf(tokenId);
         setOwnerAddress(owner);
-        setSuccess(`Token ID ${tokenId} 的所有者是: ${owner}`);
+        setSuccess(`Owner of Token ID ${tokenId} is: ${owner}`);
 
-        // 同时获取头寸信息
+        // Also get position information
         await handleGetPositionInfo();
       } catch (error) {
         if (error.message.includes('owner query for nonexistent token')) {
-          throw new Error(`Token ID ${tokenId} 不存在`);
+          throw new Error(`Token ID ${tokenId} does not exist`);
         } else {
           throw error;
         }
       }
     } catch (error) {
-      console.error('查询NFT所有者失败:', error);
-      setError(error.message || '查询NFT所有者失败，请重试');
+      console.error('Failed to query NFT owner:', error);
+      setError(error.message || 'Failed to query NFT owner, please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  // 获取头寸信息
+  // Get position information
   const handleGetPositionInfo = async (e) => {
     if (e) e.preventDefault();
 
@@ -126,11 +126,11 @@ const PositionManagement = () => {
 
     try {
       if (!tokenId || isNaN(parseInt(tokenId))) {
-        throw new Error('请输入有效的Token ID');
+        throw new Error('Please enter a valid Token ID');
       }
 
       if (!contracts || !contracts.positionContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { positionContract } = contracts;
@@ -148,18 +148,18 @@ const PositionManagement = () => {
         setPositionInfo(posInfo);
 
         if (e) {
-          setSuccess(`已获取Token ID ${tokenId} 的头寸信息`);
+          setSuccess(`Retrieved position information for Token ID ${tokenId}`);
         }
       } catch (error) {
         if (error.message.includes('Position does not exist')) {
-          throw new Error(`Token ID ${tokenId} 不存在`);
+          throw new Error(`Token ID ${tokenId} does not exist`);
         } else {
           throw error;
         }
       }
     } catch (error) {
-      console.error('获取头寸信息失败:', error);
-      setError(error.message || '获取头寸信息失败，请重试');
+      console.error('Failed to get position information:', error);
+      setError(error.message || 'Failed to get position information, please try again');
     } finally {
       if (e) {
         setLoading(false);
@@ -167,7 +167,7 @@ const PositionManagement = () => {
     }
   };
 
-  // 设置基础URI
+  // Set base URI
   const handleSetBaseURI = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -177,11 +177,11 @@ const PositionManagement = () => {
 
     try {
       if (!baseURI) {
-        throw new Error('请输入基础URI');
+        throw new Error('Please enter a base URI');
       }
 
       if (!contracts || !contracts.positionContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { positionContract } = contracts;
@@ -190,17 +190,17 @@ const PositionManagement = () => {
       setTxHash(tx.hash);
       await tx.wait();
 
-      setSuccess(`基础URI已成功设置为: ${baseURI}`);
+      setSuccess(`Base URI has been successfully set to: ${baseURI}`);
       setBaseURI('');
     } catch (error) {
-      console.error('设置基础URI失败:', error);
-      setError(error.message || '设置基础URI失败，请重试');
+      console.error('Failed to set base URI:', error);
+      setError(error.message || 'Failed to set base URI, please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  // 授权或取消授权池合约
+  // Authorize or deauthorize pool contract
   const handleSetPoolAuthorization = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -210,11 +210,11 @@ const PositionManagement = () => {
 
     try {
       if (!ethers.utils.isAddress(poolAddress)) {
-        throw new Error('请输入有效的池合约地址');
+        throw new Error('Please enter a valid pool contract address');
       }
 
       if (!contracts || !contracts.positionContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { positionContract } = contracts;
@@ -223,16 +223,16 @@ const PositionManagement = () => {
       setTxHash(tx.hash);
       await tx.wait();
 
-      setSuccess(`池合约 ${poolAddress} 已成功${isAuthorized ? '授权' : '取消授权'}`);
+      setSuccess(`Pool contract ${poolAddress} has been successfully ${isAuthorized ? 'authorized' : 'deauthorized'}`);
     } catch (error) {
-      console.error('设置池授权失败:', error);
-      setError(error.message || '设置池授权失败，请重试');
+      console.error('Failed to set pool authorization:', error);
+      setError(error.message || 'Failed to set pool authorization, please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  // 查询用户拥有的所有tokenId
+  // Query all tokenIds owned by a user
   const handleGetUserTokens = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -242,11 +242,11 @@ const PositionManagement = () => {
 
     try {
       if (!ethers.utils.isAddress(userAddress)) {
-        throw new Error('请输入有效的用户地址');
+        throw new Error('Please enter a valid user address');
       }
 
       if (!contracts || !contracts.positionContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { positionContract } = contracts;
@@ -257,17 +257,17 @@ const PositionManagement = () => {
         setUserTokens(tokenIds);
 
         if (tokenIds.length === 0) {
-          setSuccess(`用户 ${userAddress} 没有拥有任何NFT头寸`);
+          setSuccess(`User ${userAddress} does not own any NFT positions`);
         } else {
-          setSuccess(`用户 ${userAddress} 拥有 ${tokenIds.length} 个NFT头寸`);
+          setSuccess(`User ${userAddress} owns ${tokenIds.length} NFT positions`);
         }
       } catch (error) {
-        console.error('查询用户头寸失败:', error);
-        throw new Error('查询用户头寸失败，请重试');
+        console.error('Failed to query user positions:', error);
+        throw new Error('Failed to query user positions, please try again');
       }
     } catch (error) {
-      console.error('查询用户头寸失败:', error);
-      setError(error.message || '查询用户头寸失败，请重试');
+      console.error('Failed to query user positions:', error);
+      setError(error.message || 'Failed to query user positions, please try again');
     } finally {
       setLoading(false);
     }
@@ -278,7 +278,7 @@ const PositionManagement = () => {
       <Header address={address} isAdmin={true} />
       <div className="admin-dashboard-container">
         <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">NFT头寸管理</h1>
+          <h1 className="admin-dashboard-title">NFT Position Management</h1>
         </div>
 
         {error && (
@@ -297,7 +297,7 @@ const PositionManagement = () => {
                 rel="noopener noreferrer"
                 className="admin-dashboard-tx-link"
               >
-                查看交易
+                View Transaction
               </a>
             )}
           </div>
@@ -306,15 +306,15 @@ const PositionManagement = () => {
         {dataLoading ? (
           <div className="admin-dashboard-loading">
             <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">加载中...</p>
+            <p className="admin-dashboard-loading-text">Loading...</p>
           </div>
         ) : (
           <div className="row">
-            {/* 查询NFT所有者和头寸信息 */}
+            {/* Query NFT Owner and Position Information */}
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">查询NFT信息</h5>
+                  <h5 className="admin-dashboard-card-title">Query NFT Information</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <form onSubmit={handleQueryOwner} className="mb-4">
@@ -322,7 +322,7 @@ const PositionManagement = () => {
                       <input
                         type="number"
                         className="form-control"
-                        placeholder="输入Token ID"
+                        placeholder="Enter Token ID"
                         value={tokenId}
                         onChange={(e) => setTokenId(e.target.value)}
                         disabled={loading}
@@ -334,7 +334,7 @@ const PositionManagement = () => {
                         className="btn btn-primary me-2"
                         disabled={loading || !tokenId}
                       >
-                        {loading ? '查询中...' : '查询所有者'}
+                        {loading ? 'Querying...' : 'Query Owner'}
                       </button>
                       <button
                         type="button"
@@ -342,52 +342,52 @@ const PositionManagement = () => {
                         onClick={handleGetPositionInfo}
                         disabled={loading || !tokenId}
                       >
-                        {loading ? '查询中...' : '查询头寸信息'}
+                        {loading ? 'Querying...' : 'Query Position Info'}
                       </button>
                     </div>
                   </form>
 
                   {ownerAddress && (
                     <div className="admin-dashboard-info-box mb-3">
-                      <h6>所有者信息</h6>
+                      <h6>Owner Information</h6>
                       <p className="mb-0">
                         <strong>Token ID:</strong> {tokenId}
                       </p>
                       <p className="mb-0">
-                        <strong>所有者地址:</strong> {ownerAddress}
+                        <strong>Owner Address:</strong> {ownerAddress}
                       </p>
                     </div>
                   )}
 
                   {positionInfo && (
                     <div className="admin-dashboard-info-box">
-                      <h6>头寸信息</h6>
+                      <h6>Position Information</h6>
                       <p className="mb-0">
-                        <strong>Token0 地址:</strong> {positionInfo.token0}
+                        <strong>Token0 Address:</strong> {positionInfo.token0}
                       </p>
                       <p className="mb-0">
-                        <strong>Token1 地址:</strong> {positionInfo.token1}
+                        <strong>Token1 Address:</strong> {positionInfo.token1}
                       </p>
                       <p className="mb-0">
-                        <strong>Token0 数量:</strong> {positionInfo.amount0}
+                        <strong>Token0 Amount:</strong> {positionInfo.amount0}
                       </p>
                       <p className="mb-0">
-                        <strong>Token1 数量:</strong> {positionInfo.amount1}
+                        <strong>Token1 Amount:</strong> {positionInfo.amount1}
                       </p>
                       <p className="mb-0">
-                        <strong>创建时间:</strong> {positionInfo.createdAt}
+                        <strong>Created At:</strong> {positionInfo.createdAt}
                       </p>
                     </div>
                   )}
 
-                  {/* 查询用户拥有的所有tokenId */}
+                  {/* Query all tokenIds owned by a user */}
                   <form onSubmit={handleGetUserTokens} className="mt-4">
-                    <h6 className="admin-dashboard-form-title">查询用户拥有的NFT</h6>
+                    <h6 className="admin-dashboard-form-title">Query User's NFTs</h6>
                     <div className="input-group mb-3">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="输入用户地址"
+                        placeholder="Enter User Address"
                         value={userAddress}
                         onChange={(e) => setUserAddress(e.target.value)}
                         disabled={loading}
@@ -398,13 +398,13 @@ const PositionManagement = () => {
                       className="btn btn-primary"
                       disabled={loading || !userAddress}
                     >
-                      {loading ? '查询中...' : '查询用户NFT'}
+                      {loading ? 'Querying...' : 'Query User NFTs'}
                     </button>
                   </form>
 
                   {userTokens.length > 0 && (
                     <div className="admin-dashboard-info-box mt-3">
-                      <h6>用户拥有的NFT头寸</h6>
+                      <h6>User's NFT Positions</h6>
                       <div className="user-tokens-list">
                         {userTokens.map((tokenId, index) => (
                           <div key={index} className="user-token-item">
@@ -418,21 +418,21 @@ const PositionManagement = () => {
               </div>
             </div>
 
-            {/* 设置基础URI和池授权 */}
+            {/* Set Base URI and Pool Authorization */}
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">NFT设置</h5>
+                  <h5 className="admin-dashboard-card-title">NFT Settings</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
-                  {/* 设置基础URI */}
+                  {/* Set Base URI */}
                   <form onSubmit={handleSetBaseURI} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">设置基础URI</h6>
+                    <h6 className="admin-dashboard-form-title">Set Base URI</h6>
                     <div className="input-group mb-3">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="输入基础URI (例如: https://example.com/nft/)"
+                        placeholder="Enter Base URI (e.g.: https://example.com/nft/)"
                         value={baseURI}
                         onChange={(e) => setBaseURI(e.target.value)}
                         disabled={loading}
@@ -443,18 +443,18 @@ const PositionManagement = () => {
                       className="btn btn-primary"
                       disabled={loading || !baseURI}
                     >
-                      {loading ? '处理中...' : '设置基础URI'}
+                      {loading ? 'Processing...' : 'Set Base URI'}
                     </button>
                   </form>
 
-                  {/* 授权或取消授权池合约 */}
+                  {/* Authorize or Deauthorize Pool Contract */}
                   <form onSubmit={handleSetPoolAuthorization}>
-                    <h6 className="admin-dashboard-form-title">池合约授权</h6>
+                    <h6 className="admin-dashboard-form-title">Pool Contract Authorization</h6>
                     <div className="input-group mb-3">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="输入池合约地址"
+                        placeholder="Enter Pool Contract Address"
                         value={poolAddress}
                         onChange={(e) => setPoolAddress(e.target.value)}
                         disabled={loading}
@@ -470,7 +470,7 @@ const PositionManagement = () => {
                         disabled={loading}
                       />
                       <label className="form-check-label" htmlFor="authorizedSwitch">
-                        {isAuthorized ? '授权' : '取消授权'}
+                        {isAuthorized ? 'Authorize' : 'Deauthorize'}
                       </label>
                     </div>
                     <button
@@ -478,7 +478,7 @@ const PositionManagement = () => {
                       className="btn btn-primary"
                       disabled={loading || !poolAddress}
                     >
-                      {loading ? '处理中...' : isAuthorized ? '授权池合约' : '取消授权池合约'}
+                      {loading ? 'Processing...' : isAuthorized ? 'Authorize Pool Contract' : 'Deauthorize Pool Contract'}
                     </button>
                   </form>
                 </div>

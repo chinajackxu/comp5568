@@ -4,13 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 const Header = ({ address, isAdmin }) => {
   const navigate = useNavigate();
 
-  // 格式化地址显示
+  // Format address display
   const formatAddress = (address) => {
     if (!address) return '';
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  // 退出登录
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem('userAddress');
     localStorage.removeItem('isAdmin');
@@ -28,17 +28,19 @@ const Header = ({ address, isAdmin }) => {
           <ul>
             {isAdmin ? (
               <>
-                <li><Link to="/admin">控制面板</Link></li>
-                <li><Link to="/admin/tokens">代币管理</Link></li>
-                <li><Link to="/admin/pool-settings">池参数设置</Link></li>
-                <li><Link to="/admin/positions">NFT头寸管理</Link></li>
-                <li><Link to="/admin/fees">手续费管理</Link></li>
+                <li><Link to="/admin">Dashboard</Link></li>
+                <li><Link to="/admin/tokens">Token Management</Link></li>
+                <li><Link to="/admin/pool-settings">Pool Settings</Link></li>
+                <li><Link to="/admin/positions">NFT Position Management</Link></li>
+                <li><Link to="/admin/fees">Fee Management</Link></li>
               </>
             ) : (
               <>
-                <li><Link to="/user">控制面板</Link></li>
-                <li><Link to="/user/liquidity">流动性</Link></li>
-                <li><Link to="/user/swap">交换</Link></li>
+                <li><Link to="/user">Dashboard</Link></li>
+                <li><Link to="/user/liquidity">Liquidity</Link></li>
+                <li><Link to="/user/swap">Swap</Link></li>
+                <li><Link to="/user/history">Transaction History</Link></li>
+                <li><Link to="/user/price">Price Chart</Link></li>
               </>
             )}
           </ul>
@@ -49,7 +51,7 @@ const Header = ({ address, isAdmin }) => {
             {formatAddress(address)}
           </div>
           <button className="btn" onClick={handleLogout}>
-            退出
+            Logout
           </button>
         </div>
       </div>

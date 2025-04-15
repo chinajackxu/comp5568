@@ -98,8 +98,8 @@ const TokenManagement = () => {
       });
 
     } catch (error) {
-      console.error('加载代币数据失败:', error);
-      setError('加载代币数据失败，请刷新页面重试');
+      console.error('Failed to load token data:', error);
+      setError('Failed to load token data, please refresh the page and try again');
     } finally {
       setDataLoading(false);
     }
@@ -114,16 +114,16 @@ const TokenManagement = () => {
 
     try {
       if (!contracts) {
-        throw new Error('合约未初始化，请刷新页面重试');
+        throw new Error('Contracts not initialized, please refresh the page and try again');
       }
 
       // 验证输入
       if (!mintAmount || parseFloat(mintAmount) <= 0) {
-        throw new Error('请输入有效的铸造金额');
+        throw new Error('Please enter a valid mint amount');
       }
 
       if (!ethers.utils.isAddress(mintTo)) {
-        throw new Error('请输入有效的接收地址');
+        throw new Error('Please enter a valid recipient address');
       }
 
       // 选择合约
@@ -139,7 +139,7 @@ const TokenManagement = () => {
       await tx.wait();
 
       // 显示成功消息
-      setSuccess(`成功铸造 ${mintAmount} ${tokenSymbol} 到地址 ${mintTo}`);
+      setSuccess(`Successfully minted ${mintAmount} ${tokenSymbol} to address ${mintTo}`);
 
       // 重置表单
       setMintAmount('');
@@ -149,8 +149,8 @@ const TokenManagement = () => {
       await loadTokenData();
 
     } catch (error) {
-      console.error('铸造代币失败:', error);
-      setError(error.message || '铸造代币失败，请重试');
+      console.error('Failed to mint tokens:', error);
+      setError(error.message || 'Failed to mint tokens, please try again');
     } finally {
       setLoading(false);
     }
@@ -165,16 +165,16 @@ const TokenManagement = () => {
 
     try {
       if (!contracts) {
-        throw new Error('合约未初始化，请刷新页面重试');
+        throw new Error('Contracts not initialized, please refresh the page and try again');
       }
 
       // 验证输入
       if (!transferAmount || parseFloat(transferAmount) <= 0) {
-        throw new Error('请输入有效的转账金额');
+        throw new Error('Please enter a valid transfer amount');
       }
 
       if (!ethers.utils.isAddress(transferTo)) {
-        throw new Error('请输入有效的接收地址');
+        throw new Error('Please enter a valid recipient address');
       }
 
       // 选择合约
@@ -190,7 +190,7 @@ const TokenManagement = () => {
       await tx.wait();
 
       // 显示成功消息
-      setSuccess(`成功转账 ${transferAmount} ${tokenSymbol} 到地址 ${transferTo}`);
+      setSuccess(`Successfully transferred ${transferAmount} ${tokenSymbol} to address ${transferTo}`);
 
       // 重置表单
       setTransferAmount('');
@@ -200,8 +200,8 @@ const TokenManagement = () => {
       await loadTokenData();
 
     } catch (error) {
-      console.error('转账代币失败:', error);
-      setError(error.message || '转账代币失败，请重试');
+      console.error('Failed to transfer tokens:', error);
+      setError(error.message || 'Failed to transfer tokens, please try again');
     } finally {
       setLoading(false);
     }
@@ -212,7 +212,7 @@ const TokenManagement = () => {
       <Header address={address} isAdmin={true} />
       <div className="container">
         <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
-          <h1>代币管理</h1>
+          <h1>Token Management</h1>
           <button
             className="dashboard-refresh-btn"
             onClick={loadTokenData}
@@ -222,7 +222,7 @@ const TokenManagement = () => {
               <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
               <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
             </svg>
-            刷新数据
+            Refresh Data
           </button>
         </div>
 
@@ -233,7 +233,7 @@ const TokenManagement = () => {
               className="dashboard-refresh-btn ml-3"
               onClick={loadTokenData}
             >
-              重试
+              Retry
             </button>
           </div>
         )}
@@ -247,27 +247,27 @@ const TokenManagement = () => {
         {dataLoading ? (
           <div className="dashboard-loading">
             <div className="dashboard-loading-spinner"></div>
-            <p className="mt-3">加载代币数据...</p>
+            <p className="mt-3">Loading token data...</p>
           </div>
         ) : (
           <div className="row">
-            {/* 代币余额 */}
+            {/* Token Balances */}
             <div className="col-md-12 mb-4">
               <div className="dashboard-card">
                 <div className="dashboard-card-header">
-                  <h5>代币余额</h5>
+                  <h5>Token Balances</h5>
                 </div>
                 <div className="dashboard-card-body">
                   <div className="row">
                     <div className="col-md-6">
                       <div className="dashboard-stat">
-                        <h6>{tokenData.btkSymbol} 余额</h6>
+                        <h6>{tokenData.btkSymbol} Balance</h6>
                         <p><span className="dashboard-stat-value">{tokenData.btkBalance}</span> {tokenData.btkSymbol}</p>
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="dashboard-stat">
-                        <h6>{tokenData.mtkSymbol} 余额</h6>
+                        <h6>{tokenData.mtkSymbol} Balance</h6>
                         <p><span className="dashboard-stat-value">{tokenData.mtkBalance}</span> {tokenData.mtkSymbol}</p>
                       </div>
                     </div>
@@ -276,16 +276,16 @@ const TokenManagement = () => {
               </div>
             </div>
 
-            {/* 铸造代币 */}
+            {/* Mint Tokens */}
             <div className="col-md-6 mb-4">
               <div className="dashboard-card">
                 <div className="dashboard-card-header">
-                  <h5>铸造代币</h5>
+                  <h5>Mint Tokens</h5>
                 </div>
                 <div className="dashboard-card-body">
                   <form onSubmit={handleMint}>
                     <div className="mb-3">
-                      <label className="form-label">选择代币</label>
+                      <label className="form-label">Select Token</label>
                       <div className="d-flex">
                         <div className="form-check me-3">
                           <input
@@ -321,7 +321,7 @@ const TokenManagement = () => {
                     </div>
 
                     <div className="mb-3">
-                      <label htmlFor="mintAmount" className="form-label">铸造金额</label>
+                      <label htmlFor="mintAmount" className="form-label">Mint Amount</label>
                       <div className="input-group">
                         <input
                           type="number"
@@ -329,7 +329,7 @@ const TokenManagement = () => {
                           id="mintAmount"
                           value={mintAmount}
                           onChange={(e) => setMintAmount(e.target.value)}
-                          placeholder="输入金额"
+                          placeholder="Enter amount"
                           disabled={loading}
                           step="0.000001"
                           min="0"
@@ -342,7 +342,7 @@ const TokenManagement = () => {
                     </div>
 
                     <div className="mb-3">
-                      <label htmlFor="mintTo" className="form-label">接收地址</label>
+                      <label htmlFor="mintTo" className="form-label">Recipient Address</label>
                       <input
                         type="text"
                         className="form-control"
@@ -354,7 +354,7 @@ const TokenManagement = () => {
                         required
                       />
                       <small className="form-text text-muted">
-                        输入要接收铸造代币的以太坊地址
+                        Enter the Ethereum address to receive the minted tokens
                       </small>
                     </div>
 
@@ -364,7 +364,7 @@ const TokenManagement = () => {
                         className="btn btn-primary"
                         disabled={loading}
                       >
-                        {loading ? '处理中...' : '铸造代币'}
+                        {loading ? 'Processing...' : 'Mint Tokens'}
                       </button>
                     </div>
                   </form>
@@ -372,16 +372,16 @@ const TokenManagement = () => {
               </div>
             </div>
 
-            {/* 转账代币 */}
+            {/* Transfer Tokens */}
             <div className="col-md-6 mb-4">
               <div className="dashboard-card">
                 <div className="dashboard-card-header">
-                  <h5>转账代币</h5>
+                  <h5>Transfer Tokens</h5>
                 </div>
                 <div className="dashboard-card-body">
                   <form onSubmit={handleTransfer}>
                     <div className="mb-3">
-                      <label className="form-label">选择代币</label>
+                      <label className="form-label">Select Token</label>
                       <div className="d-flex">
                         <div className="form-check me-3">
                           <input
@@ -417,7 +417,7 @@ const TokenManagement = () => {
                     </div>
 
                     <div className="mb-3">
-                      <label htmlFor="transferAmount" className="form-label">转账金额</label>
+                      <label htmlFor="transferAmount" className="form-label">Transfer Amount</label>
                       <div className="input-group">
                         <input
                           type="number"
@@ -425,7 +425,7 @@ const TokenManagement = () => {
                           id="transferAmount"
                           value={transferAmount}
                           onChange={(e) => setTransferAmount(e.target.value)}
-                          placeholder="输入金额"
+                          placeholder="Enter amount"
                           disabled={loading}
                           step="0.000001"
                           min="0"
@@ -436,12 +436,12 @@ const TokenManagement = () => {
                         </span>
                       </div>
                       <small className="form-text text-muted">
-                        当前余额: {transferToken === 'btk' ? tokenData.btkBalance : tokenData.mtkBalance} {transferToken === 'btk' ? tokenData.btkSymbol : tokenData.mtkSymbol}
+                        Current balance: {transferToken === 'btk' ? tokenData.btkBalance : tokenData.mtkBalance} {transferToken === 'btk' ? tokenData.btkSymbol : tokenData.mtkSymbol}
                       </small>
                     </div>
 
                     <div className="mb-3">
-                      <label htmlFor="transferTo" className="form-label">接收地址</label>
+                      <label htmlFor="transferTo" className="form-label">Recipient Address</label>
                       <input
                         type="text"
                         className="form-control"
@@ -453,7 +453,7 @@ const TokenManagement = () => {
                         required
                       />
                       <small className="form-text text-muted">
-                        输入要接收转账代币的以太坊地址
+                        Enter the Ethereum address to receive the transferred tokens
                       </small>
                     </div>
 
@@ -463,7 +463,7 @@ const TokenManagement = () => {
                         className="btn btn-primary"
                         disabled={loading}
                       >
-                        {loading ? '处理中...' : '转账代币'}
+                        {loading ? 'Processing...' : 'Transfer Tokens'}
                       </button>
                     </div>
                   </form>

@@ -8,7 +8,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // 重置表单
+  // Reset form
   useEffect(() => {
     if (show) {
       setAmount0('');
@@ -19,7 +19,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
     }
   }, [show]);
 
-  // 处理添加流动性
+  // Handle add liquidity
   const handleAddLiquidity = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -29,32 +29,32 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
     try {
       // 验证输入
       if (!amount0 || !amount1) {
-        throw new Error('请输入两种代币的金额');
+        throw new Error('Please enter amounts for both tokens');
       }
 
-      // 转换为Wei
+      // Convert to Wei
       const amount0Wei = ethers.utils.parseEther(amount0);
       const amount1Wei = ethers.utils.parseEther(amount1);
 
-      // 设置最小接受金额（这里设为0，实际应用中应该设置合理的值）
+      // Set minimum accepted amounts (set to 0 here, should be a reasonable value in real applications)
       const minAmount0 = 0;
       const minAmount1 = 0;
 
-      // 设置截止时间（当前时间 + 1小时）
+      // Set deadline (current time + 1 hour)
       const deadline = Math.floor(Date.now() / 1000) + 3600;
 
-      // 调用添加流动性函数
+      // Call add liquidity function
       const result = await onAddLiquidity(amount0Wei, amount1Wei, minAmount0, minAmount1, deadline);
 
-      setSuccess(`成功添加流动性并创建NFT头寸，ID: ${result}`);
+      setSuccess(`Successfully added liquidity and created NFT position, ID: ${result}`);
 
-      // 3秒后关闭模态框
+      // Close modal after 3 seconds
       setTimeout(() => {
         onClose();
       }, 3000);
     } catch (error) {
-      console.error('添加流动性失败:', error);
-      setError(error.message || '添加流动性失败，请重试');
+      console.error('Failed to add liquidity:', error);
+      setError(error.message || 'Failed to add liquidity, please try again');
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
     <div className="modal-backdrop">
       <div className="modal-content">
         <div className="modal-header">
-          <h5 className="modal-title">添加流动性</h5>
+          <h5 className="modal-title">Add Liquidity</h5>
           <button
             type="button"
             className="btn-close"
@@ -92,7 +92,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
 
           <form onSubmit={handleAddLiquidity}>
             <div className="mb-3">
-              <label htmlFor="amount0" className="form-label">{token0Symbol} 金额</label>
+              <label htmlFor="amount0" className="form-label">{token0Symbol} Amount</label>
               <div className="input-group">
                 <input
                   type="number"
@@ -100,7 +100,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
                   id="amount0"
                   value={amount0}
                   onChange={(e) => setAmount0(e.target.value)}
-                  placeholder={`输入金额`}
+                  placeholder={`Enter amount`}
                   disabled={loading}
                   step="0.000001"
                   min="0"
@@ -108,11 +108,11 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
                 />
                 <span className="input-group-text">{token0Symbol}</span>
               </div>
-              <small className="form-text text-muted">请输入要添加的 {token0Symbol} 数量</small>
+              <small className="form-text text-muted">Please enter the amount of {token0Symbol} to add</small>
             </div>
 
             <div className="mb-3">
-              <label htmlFor="amount1" className="form-label">{token1Symbol} 金额</label>
+              <label htmlFor="amount1" className="form-label">{token1Symbol} Amount</label>
               <div className="input-group">
                 <input
                   type="number"
@@ -120,7 +120,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
                   id="amount1"
                   value={amount1}
                   onChange={(e) => setAmount1(e.target.value)}
-                  placeholder={`输入金额`}
+                  placeholder={`Enter amount`}
                   disabled={loading}
                   step="0.000001"
                   min="0"
@@ -128,7 +128,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
                 />
                 <span className="input-group-text">{token1Symbol}</span>
               </div>
-              <small className="form-text text-muted">请输入要添加的 {token1Symbol} 数量</small>
+              <small className="form-text text-muted">Please enter the amount of {token1Symbol} to add</small>
             </div>
 
             <div className="d-grid gap-2 mt-4">
@@ -137,7 +137,7 @@ const AddLiquidityModal = ({ show, onClose, onAddLiquidity, token0Symbol, token1
                 className="btn btn-primary"
                 disabled={loading}
               >
-                {loading ? '处理中...' : '添加流动性'}
+                {loading ? 'Processing...' : 'Add Liquidity'}
               </button>
             </div>
           </form>

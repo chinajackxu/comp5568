@@ -1,0 +1,183 @@
+# OnlyDex用户界面功能规划
+
+## 1. 用户仪表盘 (Dashboard) - 已实现
+
+界面名称: UserDashboard
+路径: /user
+
+功能:
+- 显示用户代币余额 (BTK和MTK) - 已实现
+- 显示当前汇率 - 已实现
+- 显示用户的NFT头寸数量 - 已实现
+- 快速操作按钮 (链接到其他功能页面) - 已实现
+
+API调用:
+- btkContract.balanceOf(userAddress) - 已实现
+- mtkContract.balanceOf(userAddress) - 已实现
+- poolContract.getRate() - 已实现
+- positionContract.balanceOf(userAddress) - 已实现
+
+## 2. 代币交换 (Swap) - 已实现
+
+界面名称: TokenSwap
+路径: /user/swap
+
+功能:
+- 交换BTK和MTK代币 - 已实现
+- 显示交换预览 (预期收到的代币数量) - 已实现
+- 设置滑点容忍度 - 已实现
+- 记录交易信息到后端数据库 - 待实现
+- 记录交易前后汇率变化 - 待实现
+
+API调用:
+- poolContract.getRate() - 已实现
+- poolContract.swap0to1/swap1to0(amountIn, minAmountOut, deadline) - 已实现
+- btkContract.approve(poolAddress, amount) - 已实现
+- mtkContract.approve(poolAddress, amount) - 已实现
+- 新增: 调用后端 API 记录交易信息 - 待实现
+
+## 3. 交易历史 (Transaction History) - 已实现
+
+界面名称: TransactionHistory
+路径: /user/history
+
+功能:
+- 显示用户的交易历史 - 已实现
+- 支持分页查看 - 已实现
+- 提供交易详情链接 - 已实现
+
+API调用:
+- GET /api/transactions?userAddress=0x... - 已实现
+
+## 4. 价格行情 (Price Chart) - 已实现
+
+界面名称: PriceChart
+路径: /user/price
+
+功能:
+- 显示汇率变化图表 - 已实现
+- 支持不同时间范围查看 (24小时/7天/30天/全部) - 已实现
+- 支持切换汇率方向 (BTK->MTK 或 MTK->BTK) - 已实现
+- 显示当前汇率和变化百分比 - 已实现
+- 显示池余额信息 - 已实现
+
+API调用:
+- GET /api/rate-changes?limit=100 - 已实现
+
+## 5. 流动性管理 (Liquidity)
+
+界面名称: LiquidityManagement
+路径: /user/liquidity
+
+功能:
+- 添加流动性
+- 移除流动性
+- 查看用户的流动性头寸
+
+API调用:
+- poolContract.addLiquidity(amount0, amount1, minAmount0, minAmount1, deadline)
+- poolContract.removeLiquidity(tokenId, amount0Min, amount1Min, deadline)
+- positionContract.tokensOfOwner(userAddress)
+- positionContract.getPositionInfo(tokenId)
+- btkContract.approve(poolAddress, amount)
+- mtkContract.approve(poolAddress, amount)
+
+## 4. 头寸详情 (Position Details)
+
+界面名称: PositionDetails
+路径: /user/positions
+
+功能:
+- 查看用户拥有的所有NFT头寸
+- 查看每个头寸的详细信息
+- 计算头寸价值和收益
+
+API调用:
+- positionContract.tokensOfOwner(userAddress)
+- positionContract.getPositionInfo(tokenId)
+- poolContract.getRate()
+
+## 实现优先级
+
+1. 高优先级 (核心功能):
+   - 用户仪表盘 (Dashboard)
+   - 代币交换 (Swap)
+   - 流动性管理 (Liquidity)
+
+2. 中优先级:
+   - 头寸详情 (Position Details)
+
+## 界面设计注意事项
+
+1. 简洁直观的用户界面
+2. 提供操作反馈 (成功/失败消息)
+3. 显示交易哈希和链接到Etherscan
+4. 实现加载状态指示器
+5. 提供帮助文本和工具提示
+6. 实现响应式设计，适应不同屏幕尺寸
+7. 确保用户友好的错误处理
+
+# 后端数据库设计
+
+## 交易记录数据库
+
+### 交易记录表 (TransactionRecords)
+
+```
+{
+  id: ObjectId,                // 自动生成的唯一ID
+  txHash: String,              // 交易哈希
+  userAddress: String,         // 用户地址
+  tokenIn: String,             // 输入代币 ('BTK' 或 'MTK')
+  tokenOut: String,            // 输出代币 ('BTK' 或 'MTK')
+  amountIn: String,            // 输入金额
+  amountOut: String,           // 输出金额
+  slippage: String,            // 滑点设置
+  timestamp: Date,             // 交易时间
+  status: String,              // 交易状态 ('success', 'failed')
+  gasUsed: String,             // 使用的gas
+  blockNumber: Number,         // 区块高度
+  networkName: String          // 网络名称 ('sepolia', 'mainnet' 等)
+}
+```
+
+### 汇率变化记录表 (RateChangeRecords)
+
+```
+{
+  id: ObjectId,                // 自动生成的唯一ID
+  txHash: String,              // 关联的交易哈希
+  rateBefore: {                // 交易前的汇率
+    btkToMtk: String,          // 1 BTK = X MTK
+    mtkToBtk: String           // 1 MTK = X BTK
+  },
+  rateAfter: {                 // 交易后的汇率
+    btkToMtk: String,          // 1 BTK = X MTK
+    mtkToBtk: String           // 1 MTK = X BTK
+  },
+  changePercentage: {          // 变化百分比
+    btkToMtk: String,          // BTK到MTK汇率变化百分比
+    mtkToBtk: String           // MTK到BTK汇率变化百分比
+  },
+  poolBalanceBefore: {         // 交易前池中余额
+    btk: String,
+    mtk: String
+  },
+  poolBalanceAfter: {          // 交易后池中余额
+    btk: String,
+    mtk: String
+  },
+  timestamp: Date              // 记录时间
+}
+```
+
+## API端点
+
+### 记录交易信息
+POST /api/transactions
+
+### 获取交易历史
+GET /api/transactions?userAddress=0x...
+
+### 获取汇率变化历史
+GET /api/rate-changes?limit=10

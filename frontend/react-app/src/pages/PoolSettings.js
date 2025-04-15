@@ -19,30 +19,30 @@ const PoolSettings = () => {
   const [txHash, setTxHash] = useState('');
   const [networkName, setNetworkName] = useState('');
 
-  // 池参数状态
+  // Pool parameter states
   const [swapFee, setSwapFee] = useState('');
   const [maxPriceDeviation, setMaxPriceDeviation] = useState('');
   const [isPaused, setIsPaused] = useState(false);
   const [newAccessManager, setNewAccessManager] = useState('');
 
-  // 表单状态
+  // Form states
   const [newSwapFee, setNewSwapFee] = useState('');
   const [newMaxPriceDeviation, setNewMaxPriceDeviation] = useState('');
   const [newPausedState, setNewPausedState] = useState(false);
 
-  // 初始化
+  // Initialization
   useEffect(() => {
     const checkAdminAndLoadData = async () => {
       try {
-        // 初始化合约
+        // Initialize contracts
         const contractsResult = await initializeContracts();
         const { address, accessContract } = contractsResult;
 
-        // 检查是否为管理员
+        // Check if admin
         const isAdmin = await accessContract.isAdmin(address);
 
         if (!isAdmin) {
-          console.log('非管理员账户，重定向到管理面板');
+          console.log('Not an admin account, redirecting to admin panel');
           navigate('/admin');
           return;
         }
@@ -51,16 +51,16 @@ const PoolSettings = () => {
         setIsAdmin(isAdmin);
         setContracts(contractsResult);
 
-        // 获取网络名称
+        // Get network name
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const network = await provider.getNetwork();
         setNetworkName(network.name);
 
-        // 加载池参数
+        // Load pool parameters
         await loadPoolSettings(contractsResult);
       } catch (error) {
-        console.error('初始化失败:', error);
-        setError('连接钱包或加载合约失败，请刷新页面重试');
+        console.error('Initialization failed:', error);
+        setError('Failed to connect wallet or load contracts, please refresh the page and try again');
         setDataLoading(false);
       }
     };
@@ -68,49 +68,49 @@ const PoolSettings = () => {
     checkAdminAndLoadData();
   }, [navigate]);
 
-  // 加载池参数
+  // Load pool parameters
   const loadPoolSettings = async (contractsData) => {
     setDataLoading(true);
     setError('');
 
     try {
-      // 确保我们有有效的合约实例
+      // Ensure we have valid contract instances
       const contractsToUse = contractsData || contracts;
       if (!contractsToUse || !contractsToUse.poolContract) {
-        console.error('合约实例未初始化:', contractsToUse);
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        console.error('Contract instance not initialized:', contractsToUse);
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contractsToUse;
-      console.log('成功获取池合约实例:', poolContract.address);
+      console.log('Successfully got pool contract instance:', poolContract.address);
 
-      // 并行获取所有参数
+      // Get all parameters in parallel
       const [swapFeeResult, maxPriceDeviationResult, pausedResult] = await Promise.all([
         poolContract.swapFee(),
         poolContract.maxPriceDeviation(),
         poolContract.paused()
       ]);
 
-      // 更新状态
+      // Update state
       setSwapFee(formatSwapFee(swapFeeResult));
       setMaxPriceDeviation(formatMaxPriceDeviation(maxPriceDeviationResult));
       setIsPaused(pausedResult);
       setNewPausedState(pausedResult);
 
-      // 重置表单
+      // Reset form
       setNewSwapFee('');
       setNewMaxPriceDeviation('');
       setNewAccessManager('');
 
     } catch (error) {
-      console.error('加载池参数失败:', error);
-      setError('加载池参数失败，请刷新页面重试');
+      console.error('Failed to load pool parameters:', error);
+      setError('Failed to load pool parameters, please refresh the page and try again');
     } finally {
       setDataLoading(false);
     }
   };
 
-  // 设置交易费用
+  // Set swap fee
   const handleSetSwapFee = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -120,18 +120,18 @@ const PoolSettings = () => {
 
     try {
       if (!newSwapFee || isNaN(parseFloat(newSwapFee))) {
-        throw new Error('请输入有效的交易费率');
+        throw new Error('Please enter a valid swap fee rate');
       }
 
-      // 将百分比转换为基点 (1% = 100基点)
+      // Convert percentage to basis points (1% = 100 basis points)
       const feeInBasisPoints = Math.round(parseFloat(newSwapFee) * 100);
 
       if (feeInBasisPoints < 0 || feeInBasisPoints > 100) {
-        throw new Error('交易费率必须在0-1%之间');
+        throw new Error('Swap fee rate must be between 0-1%');
       }
 
       if (!contracts || !contracts.poolContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contracts;
@@ -140,17 +140,17 @@ const PoolSettings = () => {
       setTxHash(tx.hash);
       await tx.wait();
 
-      setSuccess(`交易费率已成功设置为 ${newSwapFee}%`);
+      setSuccess(`Swap fee rate has been successfully set to ${newSwapFee}%`);
       await loadPoolSettings(contracts);
     } catch (error) {
-      console.error('设置交易费率失败:', error);
-      setError(error.message || '设置交易费率失败，请重试');
+      console.error('Failed to set swap fee rate:', error);
+      setError(error.message || 'Failed to set swap fee rate, please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  // 设置最大价格偏离
+  // Set maximum price deviation
   const handleSetMaxPriceDeviation = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -160,18 +160,18 @@ const PoolSettings = () => {
 
     try {
       if (!newMaxPriceDeviation || isNaN(parseFloat(newMaxPriceDeviation))) {
-        throw new Error('请输入有效的最大价格偏离值');
+        throw new Error('Please enter a valid maximum price deviation value');
       }
 
-      // 将百分比转换为千分比 (1% = 10千分比)
+      // Convert percentage to permille (1% = 10 permille)
       const deviationInPermille = Math.round(parseFloat(newMaxPriceDeviation) * 10);
 
       if (deviationInPermille < 1 || deviationInPermille > 200) {
-        throw new Error('最大价格偏离必须在0.1%-20%之间');
+        throw new Error('Maximum price deviation must be between 0.1%-20%');
       }
 
       if (!contracts || !contracts.poolContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contracts;
@@ -180,17 +180,17 @@ const PoolSettings = () => {
       setTxHash(tx.hash);
       await tx.wait();
 
-      setSuccess(`最大价格偏离已成功设置为 ${newMaxPriceDeviation}%`);
+      setSuccess(`Maximum price deviation has been successfully set to ${newMaxPriceDeviation}%`);
       await loadPoolSettings(contracts);
     } catch (error) {
-      console.error('设置最大价格偏离失败:', error);
-      setError(error.message || '设置最大价格偏离失败，请重试');
+      console.error('Failed to set maximum price deviation:', error);
+      setError(error.message || 'Failed to set maximum price deviation, please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  // 暂停/恢复池操作
+  // Pause/resume pool operations
   const handleSetPaused = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -200,7 +200,7 @@ const PoolSettings = () => {
 
     try {
       if (!contracts || !contracts.poolContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contracts;
@@ -209,17 +209,17 @@ const PoolSettings = () => {
       setTxHash(tx.hash);
       await tx.wait();
 
-      setSuccess(`池状态已成功${newPausedState ? '暂停' : '恢复'}`);
+      setSuccess(`Pool state has been successfully ${newPausedState ? 'paused' : 'resumed'}`);
       await loadPoolSettings(contracts);
     } catch (error) {
-      console.error(`${newPausedState ? '暂停' : '恢复'}池操作失败:`, error);
-      setError(error.message || `${newPausedState ? '暂停' : '恢复'}池操作失败，请重试`);
+      console.error(`Failed to ${newPausedState ? 'pause' : 'resume'} pool operations:`, error);
+      setError(error.message || `Failed to ${newPausedState ? 'pause' : 'resume'} pool operations, please try again`);
     } finally {
       setLoading(false);
     }
   };
 
-  // 更新权限管理合约
+  // Update access manager contract
   const handleUpdateAccessManager = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -229,11 +229,11 @@ const PoolSettings = () => {
 
     try {
       if (!ethers.utils.isAddress(newAccessManager)) {
-        throw new Error('请输入有效的合约地址');
+        throw new Error('Please enter a valid contract address');
       }
 
       if (!contracts || !contracts.poolContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contracts;
@@ -242,11 +242,11 @@ const PoolSettings = () => {
       setTxHash(tx.hash);
       await tx.wait();
 
-      setSuccess('权限管理合约已成功更新');
+      setSuccess('Access manager contract has been successfully updated');
       await loadPoolSettings(contracts);
     } catch (error) {
-      console.error('更新权限管理合约失败:', error);
-      setError(error.message || '更新权限管理合约失败，请重试');
+      console.error('Failed to update access manager contract:', error);
+      setError(error.message || 'Failed to update access manager contract, please try again');
     } finally {
       setLoading(false);
     }
@@ -257,7 +257,7 @@ const PoolSettings = () => {
       <Header address={address} isAdmin={true} />
       <div className="admin-dashboard-container">
         <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">池参数设置</h1>
+          <h1 className="admin-dashboard-title">Pool Settings</h1>
           <button
             className="admin-dashboard-refresh-btn"
             onClick={() => loadPoolSettings(contracts)}
@@ -267,7 +267,7 @@ const PoolSettings = () => {
               <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
               <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
             </svg>
-            刷新数据
+            Refresh Data
           </button>
         </div>
 
@@ -278,7 +278,7 @@ const PoolSettings = () => {
               className="admin-dashboard-error-retry"
               onClick={() => loadPoolSettings(contracts)}
             >
-              重试
+              Retry
             </button>
           </div>
         )}
@@ -293,7 +293,7 @@ const PoolSettings = () => {
                 rel="noopener noreferrer"
                 className="admin-dashboard-tx-link"
               >
-                查看交易
+                View Transaction
               </a>
             )}
           </div>
@@ -302,43 +302,43 @@ const PoolSettings = () => {
         {dataLoading ? (
           <div className="admin-dashboard-loading">
             <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">加载池参数...</p>
+            <p className="admin-dashboard-loading-text">Loading pool parameters...</p>
           </div>
         ) : (
           <div className="row">
-            {/* 当前参数 */}
+            {/* Current Parameters */}
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">当前参数</h5>
+                  <h5 className="admin-dashboard-card-title">Current Parameters</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <div className="admin-dashboard-stat">
-                    <p>交易费率: <span className="admin-dashboard-stat-value">{swapFee}</span></p>
-                    <p>最大价格偏离: <span className="admin-dashboard-stat-value">{maxPriceDeviation}</span></p>
-                    <p>池状态: <span className={`admin-dashboard-status ${isPaused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
-                      {isPaused ? '已暂停' : '活跃'}
+                    <p>Swap Fee: <span className="admin-dashboard-stat-value">{swapFee}</span></p>
+                    <p>Max Price Deviation: <span className="admin-dashboard-stat-value">{maxPriceDeviation}</span></p>
+                    <p>Pool Status: <span className={`admin-dashboard-status ${isPaused ? 'admin-dashboard-status-paused' : 'admin-dashboard-status-active'}`}>
+                      {isPaused ? 'Paused' : 'Active'}
                     </span></p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 参数设置 */}
+            {/* Parameter Settings */}
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">参数设置</h5>
+                  <h5 className="admin-dashboard-card-title">Parameter Settings</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
-                  {/* 设置交易费用 */}
+                  {/* Set Swap Fee */}
                   <form onSubmit={handleSetSwapFee} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">设置交易费率</h6>
+                    <h6 className="admin-dashboard-form-title">Set Swap Fee</h6>
                     <div className="input-group mb-3">
                       <input
                         type="number"
                         className="form-control"
-                        placeholder="输入新的交易费率 (0-1%)"
+                        placeholder="Enter new swap fee rate (0-1%)"
                         step="0.01"
                         min="0"
                         max="1"
@@ -355,18 +355,18 @@ const PoolSettings = () => {
                       className="btn btn-primary"
                       disabled={loading || !newSwapFee}
                     >
-                      {loading ? '处理中...' : '设置交易费率'}
+                      {loading ? 'Processing...' : 'Set Swap Fee'}
                     </button>
                   </form>
 
-                  {/* 设置最大价格偏离 */}
+                  {/* Set Maximum Price Deviation */}
                   <form onSubmit={handleSetMaxPriceDeviation} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">设置最大价格偏离</h6>
+                    <h6 className="admin-dashboard-form-title">Set Maximum Price Deviation</h6>
                     <div className="input-group mb-3">
                       <input
                         type="number"
                         className="form-control"
-                        placeholder="输入新的最大价格偏离 (0.1-20%)"
+                        placeholder="Enter new maximum price deviation (0.1-20%)"
                         step="0.1"
                         min="0.1"
                         max="20"
@@ -383,13 +383,13 @@ const PoolSettings = () => {
                       className="btn btn-primary"
                       disabled={loading || !newMaxPriceDeviation}
                     >
-                      {loading ? '处理中...' : '设置最大价格偏离'}
+                      {loading ? 'Processing...' : 'Set Maximum Price Deviation'}
                     </button>
                   </form>
 
-                  {/* 暂停/恢复池操作 */}
+                  {/* Pause/Resume Pool Operations */}
                   <form onSubmit={handleSetPaused} className="mb-4">
-                    <h6 className="admin-dashboard-form-title">池状态管理</h6>
+                    <h6 className="admin-dashboard-form-title">Pool Status Management</h6>
                     <div className="form-check form-switch mb-3">
                       <input
                         className="form-check-input"
@@ -400,7 +400,7 @@ const PoolSettings = () => {
                         disabled={loading}
                       />
                       <label className="form-check-label" htmlFor="pausedSwitch">
-                        {newPausedState ? '池已暂停' : '池处于活跃状态'}
+                        {newPausedState ? 'Pool is paused' : 'Pool is active'}
                       </label>
                     </div>
                     <button
@@ -408,32 +408,32 @@ const PoolSettings = () => {
                       className={`btn ${newPausedState ? 'btn-danger' : 'btn-success'}`}
                       disabled={loading || newPausedState === isPaused}
                     >
-                      {loading ? '处理中...' : newPausedState ? '暂停池操作' : '恢复池操作'}
+                      {loading ? 'Processing...' : newPausedState ? 'Pause Pool Operations' : 'Resume Pool Operations'}
                     </button>
                   </form>
 
-                  {/* 更新权限管理合约 */}
+                  {/* Update Access Manager Contract */}
                   <form onSubmit={handleUpdateAccessManager}>
-                    <h6 className="admin-dashboard-form-title">更新权限管理合约 (高级功能)</h6>
+                    <h6 className="admin-dashboard-form-title">Update Access Manager Contract (Advanced)</h6>
                     <div className="input-group mb-3">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="输入新的权限管理合约地址"
+                        placeholder="Enter new access manager contract address"
                         value={newAccessManager}
                         onChange={(e) => setNewAccessManager(e.target.value)}
                         disabled={loading}
                       />
                     </div>
                     <div className="alert alert-warning" role="alert">
-                      <small>警告: 此操作将更改权限管理合约地址，可能导致管理权限丢失。请确保您知道自己在做什么！</small>
+                      <small>Warning: This operation will change the access manager contract address, which may result in loss of admin privileges. Please make sure you know what you are doing!</small>
                     </div>
                     <button
                       type="submit"
                       className="btn btn-warning"
                       disabled={loading || !newAccessManager}
                     >
-                      {loading ? '处理中...' : '更新权限管理合约'}
+                      {loading ? 'Processing...' : 'Update Access Manager Contract'}
                     </button>
                   </form>
                 </div>

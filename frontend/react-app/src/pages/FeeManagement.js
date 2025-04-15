@@ -19,26 +19,26 @@ const FeeManagement = () => {
   const [txHash, setTxHash] = useState('');
   const [networkName, setNetworkName] = useState('');
 
-  // 手续费管理状态
+  // Fee management state
   const [accumulatedFees, setAccumulatedFees] = useState({ fees0: '0', fees1: '0' });
   const [currentSwapFee, setCurrentSwapFee] = useState('0');
   const [newSwapFee, setNewSwapFee] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
   const [tokenSymbols, setTokenSymbols] = useState({ token0: 'Token0', token1: 'Token1' });
 
-  // 初始化
+  // Initialization
   useEffect(() => {
     const checkAdminAndLoadData = async () => {
       try {
-        // 初始化合约
+        // Initialize contracts
         const contractsResult = await initializeContracts();
         const { address, accessContract, poolContract, btkContract, mtkContract } = contractsResult;
 
-        // 检查是否为管理员
+        // Check if admin
         const isAdmin = await accessContract.isAdmin(address);
 
         if (!isAdmin) {
-          console.log('非管理员账户，重定向到管理面板');
+          console.log('Not an admin account, redirecting to admin panel');
           navigate('/admin');
           return;
         }
@@ -47,27 +47,27 @@ const FeeManagement = () => {
         setIsAdmin(isAdmin);
         setContracts(contractsResult);
 
-        // 获取网络名称
+        // Get network name
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const network = await provider.getNetwork();
         setNetworkName(network.name);
 
-        // 获取代币符号
+        // Get token symbols
         const token0Symbol = await btkContract.symbol();
         const token1Symbol = await mtkContract.symbol();
         setTokenSymbols({ token0: token0Symbol, token1: token1Symbol });
 
-        // 获取当前交易费率
+        // Get current swap fee rate
         const swapFee = await poolContract.swapFee();
         setCurrentSwapFee(swapFee.toString());
 
-        // 获取累积的手续费
+        // Get accumulated fees
         await loadAccumulatedFees(poolContract);
 
         setDataLoading(false);
       } catch (error) {
-        console.error('初始化失败:', error);
-        setError('连接钱包或加载合约失败，请刷新页面重试');
+        console.error('Initialization failed:', error);
+        setError('Failed to connect wallet or load contracts, please refresh the page and try again');
         setDataLoading(false);
       }
     };
@@ -84,15 +84,15 @@ const FeeManagement = () => {
         fees1: formatTokenAmount(fees.fees1)
       });
     } catch (error) {
-      console.error('获取累积手续费失败:', error);
-      setError('获取累积手续费失败，请刷新页面重试');
+      console.error('Failed to get accumulated fees:', error);
+      setError('Failed to get accumulated fees, please refresh the page and try again');
     }
   };
 
   // 刷新累积的手续费
   const handleRefreshFees = async () => {
     if (!contracts || !contracts.poolContract) {
-      setError('合约实例未初始化，请刷新页面重试');
+      setError('Contract instance not initialized, please refresh the page and try again');
       return;
     }
 
@@ -102,10 +102,10 @@ const FeeManagement = () => {
 
     try {
       await loadAccumulatedFees(contracts.poolContract);
-      setSuccess('手续费数据已刷新');
+      setSuccess('Fee data has been refreshed');
     } catch (error) {
-      console.error('刷新手续费失败:', error);
-      setError('刷新手续费失败，请重试');
+      console.error('Failed to refresh fees:', error);
+      setError('Failed to refresh fees, please try again');
     } finally {
       setLoading(false);
     }
@@ -121,11 +121,11 @@ const FeeManagement = () => {
 
     try {
       if (!ethers.utils.isAddress(recipientAddress)) {
-        throw new Error('请输入有效的接收地址');
+        throw new Error('Please enter a valid recipient address');
       }
 
       if (!contracts || !contracts.poolContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contracts;
@@ -133,7 +133,7 @@ const FeeManagement = () => {
       // 检查是否有手续费可提取
       const fees = await poolContract.getAccumulatedFees();
       if (fees.fees0.isZero() && fees.fees1.isZero()) {
-        throw new Error('没有手续费可提取');
+        throw new Error('No fees available to collect');
       }
 
       const tx = await poolContract.collectFees(recipientAddress);
@@ -144,11 +144,11 @@ const FeeManagement = () => {
       // 更新累积的手续费
       await loadAccumulatedFees(poolContract);
 
-      setSuccess(`手续费已成功提取到地址: ${recipientAddress}`);
+      setSuccess(`Fees have been successfully collected to address: ${recipientAddress}`);
       setRecipientAddress('');
     } catch (error) {
-      console.error('提取手续费失败:', error);
-      setError(error.message || '提取手续费失败，请重试');
+      console.error('Failed to collect fees:', error);
+      setError(error.message || 'Failed to collect fees, please try again');
     } finally {
       setLoading(false);
     }
@@ -166,11 +166,11 @@ const FeeManagement = () => {
       const feeValue = parseInt(newSwapFee);
 
       if (isNaN(feeValue) || feeValue < 0 || feeValue > 100) {
-        throw new Error('请输入有效的交易费用（0-100）');
+        throw new Error('Please enter a valid swap fee (0-100)');
       }
 
       if (!contracts || !contracts.poolContract) {
-        throw new Error('合约实例未初始化，请刷新页面重试');
+        throw new Error('Contract instance not initialized, please refresh the page and try again');
       }
 
       const { poolContract } = contracts;
@@ -180,11 +180,11 @@ const FeeManagement = () => {
       await tx.wait();
 
       setCurrentSwapFee(feeValue.toString());
-      setSuccess(`交易费用已成功设置为: ${feeValue} (${feeValue / 100}%)`);
+      setSuccess(`Swap fee has been successfully set to: ${feeValue} (${feeValue / 100}%)`);
       setNewSwapFee('');
     } catch (error) {
-      console.error('设置交易费用失败:', error);
-      setError(error.message || '设置交易费用失败，请重试');
+      console.error('Failed to set swap fee:', error);
+      setError(error.message || 'Failed to set swap fee, please try again');
     } finally {
       setLoading(false);
     }
@@ -195,7 +195,7 @@ const FeeManagement = () => {
       <Header address={address} isAdmin={true} />
       <div className="admin-dashboard-container">
         <div className="admin-dashboard-header">
-          <h1 className="admin-dashboard-title">手续费管理</h1>
+          <h1 className="admin-dashboard-title">Fee Management</h1>
         </div>
 
         {error && (
@@ -214,7 +214,7 @@ const FeeManagement = () => {
                 rel="noopener noreferrer"
                 className="admin-dashboard-tx-link"
               >
-                查看交易
+                View Transaction
               </a>
             )}
           </div>
@@ -223,26 +223,26 @@ const FeeManagement = () => {
         {dataLoading ? (
           <div className="admin-dashboard-loading">
             <div className="admin-dashboard-spinner"></div>
-            <p className="admin-dashboard-loading-text">加载中...</p>
+            <p className="admin-dashboard-loading-text">Loading...</p>
           </div>
         ) : (
           <div className="row">
-            {/* 累积的手续费 */}
+            {/* Accumulated Fees */}
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">累积的手续费</h5>
+                  <h5 className="admin-dashboard-card-title">Accumulated Fees</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <div className="admin-dashboard-info-box mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-2">
-                      <h6 className="mb-0">手续费余额</h6>
+                      <h6 className="mb-0">Fee Balance</h6>
                       <button
-                        className="btn btn-sm btn-outline-primary"
+                        className="admin-dashboard-refresh-btn"
                         onClick={handleRefreshFees}
                         disabled={loading}
                       >
-                        刷新
+                        Refresh
                       </button>
                     </div>
                     <p className="mb-0">
@@ -254,12 +254,12 @@ const FeeManagement = () => {
                   </div>
 
                   <form onSubmit={handleCollectFees}>
-                    <h6 className="admin-dashboard-form-title">提取手续费</h6>
+                    <h6 className="admin-dashboard-form-title">Collect Fees</h6>
                     <div className="input-group mb-3">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="输入接收地址"
+                        placeholder="Enter recipient address"
                         value={recipientAddress}
                         onChange={(e) => setRecipientAddress(e.target.value)}
                         disabled={loading}
@@ -270,54 +270,54 @@ const FeeManagement = () => {
                       className="btn btn-primary"
                       disabled={loading || !recipientAddress || (accumulatedFees.fees0 === '0' && accumulatedFees.fees1 === '0')}
                     >
-                      {loading ? '处理中...' : '提取手续费'}
+                      {loading ? 'Processing...' : 'Collect Fees'}
                     </button>
                   </form>
                 </div>
               </div>
             </div>
 
-            {/* 交易费用设置 */}
+            {/* Swap Fee Settings */}
             <div className="col-md-6 mb-4">
               <div className="admin-dashboard-card">
                 <div className="admin-dashboard-card-header">
-                  <h5 className="admin-dashboard-card-title">交易费用设置</h5>
+                  <h5 className="admin-dashboard-card-title">Swap Fee Settings</h5>
                 </div>
                 <div className="admin-dashboard-card-body">
                   <div className="admin-dashboard-info-box mb-3">
-                    <h6>当前交易费用</h6>
+                    <h6>Current Swap Fee</h6>
                     <p className="mb-0">
-                      <strong>费率:</strong> {currentSwapFee} 基点 ({parseFloat(currentSwapFee) / 100}%)
+                      <strong>Rate:</strong> {currentSwapFee} basis points ({parseFloat(currentSwapFee) / 100}%)
                     </p>
                     <p className="mb-0 text-muted small">
-                      注: 1基点 = 0.01%
+                      Note: 1 basis point = 0.01%
                     </p>
                   </div>
 
                   <form onSubmit={handleSetSwapFee}>
-                    <h6 className="admin-dashboard-form-title">设置新的交易费用</h6>
+                    <h6 className="admin-dashboard-form-title">Set New Swap Fee</h6>
                     <div className="input-group mb-3">
                       <input
                         type="number"
                         className="form-control"
-                        placeholder="输入新的交易费用（基点，0-100）"
+                        placeholder="Enter new swap fee (basis points, 0-100)"
                         value={newSwapFee}
                         onChange={(e) => setNewSwapFee(e.target.value)}
                         min="0"
                         max="100"
                         disabled={loading}
                       />
-                      <span className="input-group-text">基点</span>
+                      <span className="input-group-text">basis points</span>
                     </div>
                     <p className="text-muted small mb-3">
-                      输入值: {newSwapFee ? `${newSwapFee} 基点 = ${parseFloat(newSwapFee) / 100}%` : '请输入值'}
+                      Input value: {newSwapFee ? `${newSwapFee} basis points = ${parseFloat(newSwapFee) / 100}%` : 'Please enter a value'}
                     </p>
                     <button
                       type="submit"
                       className="btn btn-primary"
                       disabled={loading || !newSwapFee}
                     >
-                      {loading ? '处理中...' : '设置交易费用'}
+                      {loading ? 'Processing...' : 'Set Swap Fee'}
                     </button>
                   </form>
                 </div>

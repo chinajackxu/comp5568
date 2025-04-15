@@ -1,0 +1,266 @@
+# 跨链桥前端逻辑与API总结
+
+## 页面结构
+
+跨链桥前端页面主要由以下几个部分组成：
+
+1. **顶部标题栏**
+   - 显示应用名称 "MCT Token Bridge"
+   - 钱包连接按钮/状态显示
+
+2. **网络信息卡片**
+   - 显示 Sepolia 和 Hardhat 网络的合约地址信息
+   - 提供网络切换按钮
+
+3. **代币余额卡片**
+   - 根据当前连接的网络显示相应的代币余额
+   - 在 Sepolia 网络显示 Sepolia MCT 余额
+   - 在 Hardhat 网络显示 Hardhat MCT 余额
+
+4. **转账界面**
+   - 转账方向选择（根据当前网络显示可用选项）
+   - 代币选择
+   - 转账金额输入
+   - 目标地址输入
+   - 转账按钮
+
+5. **通知组件**
+   - 显示操作结果和错误信息
+
+## 状态管理
+
+主要状态变量：
+
+```javascript
+// 加载状态
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+// 配置信息
+const [config, setConfig] = useState({});
+
+// 余额信息
+const [sepoliaBalance, setSepoliaBalance] = useState('0');
+const [hardhatBalance, setHardhatBalance] = useState('0');
+
+// 转账相关
+const [transferAmount, setTransferAmount] = useState('10');
+const [direction, setDirection] = useState('s2h'); // 's2h' 或 'h2s'
+const [selectedToken, setSelectedToken] = useState('MCT');
+const [recipientAddress, setRecipientAddress] = useState('');
+const [transferPending, setTransferPending] = useState(false);
+
+// 其他状态
+const [refreshing, setRefreshing] = useState(false);
+const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' });
+
+// 钱包状态
+const [wallet, setWallet] = useState({
+  address: '',
+  chainId: '',
+  connected: false,
+  connecting: false
+});
+```
+
+## 主要函数API
+
+### 初始化和数据加载
+
+1. **useEffect - 初始化**
+   - 功能：组件挂载时加载配置和设置 MetaMask 事件监听器
+   - 调用：`useEffect(() => { ... }, [])`
+
+2. **fetchConfig**
+   - 功能：从后端获取桥接配置
+   - 参数：无
+   - 返回：无（更新 config 状态）
+   - API调用：`GET /api/config`
+
+3. **useEffect - 余额轮询**
+   - 功能：定期获取代币余额
+   - 调用：`useEffect(() => { ... }, [config, wallet.connected, wallet.address, wallet.chainId])`
+   - API调用：
+     - `GET /api/balance/sepolia/${address}`
+     - `GET /api/balance/hardhat/${address}`
+
+### 钱包交互
+
+1. **connectWallet**
+   - 功能：连接 MetaMask 钱包
+   - 参数：无
+   - 返回：无（更新 wallet 状态）
+   - 调用：点击连接钱包按钮
+
+2. **handleAccountsChanged**
+   - 功能：处理钱包账户变更
+   - 参数：`accounts` - 新的账户列表
+   - 返回：无（更新 wallet 状态）
+   - 调用：MetaMask 事件 `accountsChanged`
+
+3. **handleChainChanged**
+   - 功能：处理钱包网络变更
+   - 参数：`chainId` - 新的链ID
+   - 返回：无（更新 wallet 状态和转账方向）
+   - 调用：MetaMask 事件 `chainChanged`
+
+4. **switchToSepolia**
+   - 功能：切换到 Sepolia 测试网
+   - 参数：无
+   - 返回：无
+   - 调用：点击切换到 Sepolia 网络按钮
+
+5. **switchToHardhat**
+   - 功能：切换到 Hardhat 网络
+   - 参数：无
+   - 返回：无
+   - 调用：点击切换到 Hardhat 网络按钮
+
+### 转账相关
+
+1. **handleDirectionChange**
+   - 功能：处理转账方向变更
+   - 参数：`e` - 事件对象
+   - 返回：无（更新 direction 状态）
+   - 调用：转账方向单选按钮变更
+
+2. **handleTransferAmountChange**
+   - 功能：处理转账金额变更
+   - 参数：`e` - 事件对象
+   - 返回：无（更新 transferAmount 状态）
+   - 调用：金额输入框变更
+
+3. **handleRecipientAddressChange**
+   - 功能：处理目标地址变更
+   - 参数：`e` - 事件对象
+   - 返回：无（更新 recipientAddress 状态）
+   - 调用：地址输入框变更
+
+4. **handleTokenChange**
+   - 功能：处理代币选择变更
+   - 参数：`e` - 事件对象
+   - 返回：无（更新 selectedToken 状态）
+   - 调用：代币选择单选按钮变更
+
+5. **isValidEthereumAddress**
+   - 功能：验证以太坊地址格式
+   - 参数：`address` - 要验证的地址
+   - 返回：布尔值（地址是否有效）
+   - 调用：内部函数，用于验证用户输入
+
+6. **handleTransfer**
+   - 功能：处理转账操作
+   - 参数：无
+   - 返回：无
+   - 调用：点击转账按钮
+   - 处理逻辑：
+     - 验证转账金额和目标地址
+     - 根据转账方向执行不同逻辑：
+       - `s2h`：使用 MetaMask 直接与合约交互
+       - `h2s`：通过后端 API 处理
+   - API调用（仅 h2s 方向）：`POST /api/transfer`
+
+### 其他功能
+
+1. **handleRefreshConfig**
+   - 功能：刷新桥接配置
+   - 参数：无
+   - 返回：无
+   - 调用：点击刷新按钮
+   - API调用：`POST /api/refresh-config`
+
+2. **handleCloseNotification**
+   - 功能：关闭通知
+   - 参数：无
+   - 返回：无
+   - 调用：点击通知关闭按钮
+
+## 条件渲染逻辑
+
+1. **钱包连接状态**
+   - 未连接钱包：显示欢迎信息和连接按钮
+   - 已连接钱包：显示完整功能界面
+
+2. **网络特定显示**
+   - 连接到 Sepolia 网络：
+     - 显示 Sepolia 余额
+     - 显示 Sepolia → Hardhat 转账选项
+     - 显示切换到 Hardhat 网络按钮
+   - 连接到 Hardhat 网络：
+     - 显示 Hardhat 余额
+     - 显示 Hardhat → Sepolia 转账选项
+     - 显示切换到 Sepolia 网络按钮
+   - 连接到其他网络：
+     - 显示警告信息
+     - 提供切换网络选项
+
+3. **转账方向**
+   - `s2h`（Sepolia → Hardhat）：
+     - 使用 MetaMask 直接与合约交互
+     - 需要在 Sepolia 网络上
+   - `h2s`（Hardhat → Sepolia）：
+     - 通过后端 API 处理
+     - 可以在任何网络上发起
+
+## 后端API调用
+
+1. **获取配置**
+   - 端点：`GET /api/config`
+   - 返回：桥接配置信息
+
+2. **获取余额**
+   - 端点：`GET /api/balance/sepolia/${address}`
+   - 端点：`GET /api/balance/hardhat/${address}`
+   - 返回：指定地址的代币余额
+
+3. **刷新配置**
+   - 端点：`POST /api/refresh-config`
+   - 返回：最新的桥接配置
+
+4. **发起转账**
+   - 端点：`POST /api/transfer`
+   - 参数：
+     ```javascript
+     {
+       amount: transferAmount,
+       direction: direction,
+       from: config.hardhatTestAddress,
+       to: recipientAddress,
+       token: selectedToken
+     }
+     ```
+   - 返回：转账结果信息
+
+## 智能合约交互
+
+使用 ethers.js 与智能合约交互：
+
+1. **代币合约**
+   - 功能：
+     - `approve`：授权桥接合约使用代币
+     - `decimals`：获取代币精度
+
+2. **桥接合约**
+   - 功能：
+     - `lockTokens`：锁定代币进行跨链转账
+
+## 用户体验优化
+
+1. **加载状态显示**
+   - 使用 CircularProgress 组件显示加载状态
+
+2. **错误处理**
+   - 使用 Alert 组件显示错误信息
+   - 提供详细的错误描述
+
+3. **网络切换提示**
+   - 检测当前网络
+   - 提供网络切换按钮
+
+4. **表单验证**
+   - 验证转账金额
+   - 验证以太坊地址格式
+
+5. **响应式设计**
+   - 使用 Grid 组件实现响应式布局
+   - 适配不同屏幕尺寸
