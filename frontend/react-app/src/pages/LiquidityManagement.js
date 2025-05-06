@@ -709,18 +709,18 @@ const LiquidityManagement = () => {
         )}
       </div>
 
-      {/* 转让流动性模态框 */}
+      {/* Transfer Liquidity Modal */}
       {showTransferModal && (
         <div className="modal-overlay">
           <div className="modal-container">
             <div className="modal-header">
-              <h3>转让流动性</h3>
+              <h3>Transfer Liquidity</h3>
               <button className="modal-close" onClick={() => setShowTransferModal(false)}>&times;</button>
             </div>
             <div className="modal-body">
-              <p>您将转让ID为 {selectedTokenId} 的流动性头寈。</p>
+              <p>You are about to transfer liquidity position with ID {selectedTokenId}.</p>
               <div className="form-group">
-                <label className="form-label">接收者地址</label>
+                <label className="form-label">Recipient Address</label>
                 <input
                   type="text"
                   className="form-input"
@@ -735,34 +735,34 @@ const LiquidityManagement = () => {
                 className="modal-btn secondary"
                 onClick={() => setShowTransferModal(false)}
               >
-                取消
+                Cancel
               </button>
               <button
                 className="modal-btn primary"
                 onClick={executeTransferLiquidity}
                 disabled={transferring || !recipientAddress}
               >
-                {transferring ? '转让中...' : '确认转让'}
+                {transferring ? 'Transferring...' : 'Confirm Transfer'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 移除流动性模态框 */}
+      {/* Remove Liquidity Modal */}
       {showRemoveModal && (
         <div className="modal-overlay">
           <div className="modal-container">
             <div className="modal-header">
-              <h3>移除流动性</h3>
+              <h3>Remove Liquidity</h3>
               <button className="modal-close" onClick={() => setShowRemoveModal(false)}>&times;</button>
             </div>
             <div className="modal-body">
-              <p>您将移除ID为 {selectedTokenId} 的流动性头寈。</p>
-              <p>移除后，您将收到相应的BTK和MTK代币。</p>
+              <p>You are about to remove liquidity position with ID {selectedTokenId}.</p>
+              <p>After removal, you will receive the corresponding BTK and MTK tokens.</p>
 
               <div className="form-group">
-                <label className="form-label">滑点容忍度</label>
+                <label className="form-label">Slippage Tolerance</label>
                 <div className="form-input-group">
                   <input
                     type="number"
@@ -775,11 +775,11 @@ const LiquidityManagement = () => {
                   />
                   <div className="form-input-group-append">%</div>
                 </div>
-                <div className="form-help-text">滑点容忍度决定了您愿意接受的最大价格变动</div>
+                <div className="form-help-text">Slippage tolerance determines the maximum price movement you are willing to accept</div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">截止时间</label>
+                <label className="form-label">Deadline</label>
                 <div className="form-input-group">
                   <input
                     type="number"
@@ -789,9 +789,9 @@ const LiquidityManagement = () => {
                     onChange={(e) => setDeadline(e.target.value)}
                     min="1"
                   />
-                  <div className="form-input-group-append">分钟</div>
+                  <div className="form-input-group-append">minutes</div>
                 </div>
-                <div className="form-help-text">交易将在该时间后过期</div>
+                <div className="form-help-text">Transaction will expire after this time</div>
               </div>
             </div>
             <div className="modal-footer">
@@ -799,14 +799,14 @@ const LiquidityManagement = () => {
                 className="modal-btn secondary"
                 onClick={() => setShowRemoveModal(false)}
               >
-                取消
+                Cancel
               </button>
               <button
                 className="modal-btn danger"
                 onClick={executeRemoveLiquidity}
                 disabled={removingLiquidity}
               >
-                {removingLiquidity ? '移除中...' : '确认移除'}
+                {removingLiquidity ? 'Removing...' : 'Confirm Removal'}
               </button>
             </div>
           </div>

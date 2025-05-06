@@ -1423,7 +1423,28 @@ export const checkIsAdmin = async (accessContract, address) => {
 
 // 格式化代币金额
 export const formatTokenAmount = (amount, decimals = 18) => {
-  return ethers.utils.formatUnits(amount, decimals);
+  // 使用ethers.js的formatUnits将Wei转换为代币单位
+  const formattedAmount = ethers.utils.formatUnits(amount, decimals);
+
+  // 将字符串转换为BigNumber对象以处理大数字
+  const bigNumber = ethers.BigNumber.from(amount);
+
+  // 如果是0，直接返回0.00000000
+  if (bigNumber.isZero()) {
+    return '0.00000000';
+  }
+
+  // 处理非零值
+  // 将字符串分割为整数部分和小数部分
+  const parts = formattedAmount.split('.');
+  const integerPart = parts[0];
+  let decimalPart = parts[1] || '0';
+
+  // 确保小数部分有至少8位
+  decimalPart = decimalPart.padEnd(8, '0').substring(0, 8);
+
+  // 返回格式化的数字
+  return `${integerPart}.${decimalPart}`;
 };
 
 // 格式化汇率

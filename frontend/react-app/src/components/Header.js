@@ -48,6 +48,7 @@ const Header = ({ address, isAdmin }) => {
                 <li><Link to="/user/swap" className={isActive('/user/swap') ? 'active' : ''}>Swap</Link></li>
                 <li><Link to="/user/history" className={isActive('/user/history') ? 'active' : ''}>Transaction History</Link></li>
                 <li><Link to="/user/price" className={isActive('/user/price') ? 'active' : ''}>Price Chart</Link></li>
+                <li><Link to="#" className={isActive('/user/crosschain') ? 'active' : ''}>CrossChain</Link></li>
               </>
             )}
           </ul>
